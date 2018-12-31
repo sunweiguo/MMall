@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: snailmall-config-server
+  rabbitmq:
+    host: 111.231.119.253
+    port: 5672
+    username: root
+    password: root
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/sunweiguo/config-center-for-snailmall
+          username: sunweiguo
+          password: 22daguozi
+          search-paths: user-service-config
+    bus:
+      trace:
+        enabled: true
+      enabled: true
+server:
+  port: 8080
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+management:
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh

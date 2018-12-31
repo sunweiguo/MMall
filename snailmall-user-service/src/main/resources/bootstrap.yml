@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: user-service
+  rabbitmq:
+    host: 111.231.119.253
+    port: 5672
+    username: root
+    password: root
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: SNAILMALL-CONFIG-SERVER
+      profile: dev
+    bus:
+      trace:
+        enabled: true
+      enabled: true
+server:
+  port: 8081
+
+
