@@ -2,9 +2,9 @@ spring:
   application:
     name: snailmall-config-server
   rabbitmq:
-    host: 111.231.119.253
+    host: 127.0.0.1 #填写rabbitMQ IP地址
     port: 5672
-    username: root
+    username: root # 我自己创建的用户
     password: root
   cloud:
     config:
@@ -24,6 +24,9 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+  instance:
+    ip-address: 111.231.119.253 # 这个需要有，部署到服务器上之后，不配置服务器的ip，那么显示的是他的局域网ip，不能外网调用
+    prefer-ip-address: true
 management:
   endpoints:
     web:

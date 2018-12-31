@@ -11,6 +11,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>snailmall-config-server</name>
     <description>配置中心+自动刷新</description>
+    <packaging>jar</packaging>
 
     <properties>
         <java.version>1.8</java.version>

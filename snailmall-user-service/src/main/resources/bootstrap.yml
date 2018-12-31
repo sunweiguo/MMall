@@ -1,11 +1,15 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://111.231.119.253:8761/eureka
 spring:
   application:
     name: user-service
-  rabbitmq:
-    host: 111.231.119.253
-    port: 5672
-    username: root
-    password: root
+#  rabbitmq:
+#    host: 111.231.119.253
+#    port: 5672
+#    username: root
+#    password: root
   cloud:
     config:
       discovery:
@@ -18,5 +22,7 @@ spring:
       enabled: true
 server:
   port: 8081
+logging:
+  config: classpath:logback.xml
 
 

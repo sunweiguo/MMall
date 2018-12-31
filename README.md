@@ -1,6 +1,10 @@
+> 前方图片高能，加载不出来需要多次刷新等待
+
 ![image](http://bloghello.oursnail.cn/wallpaper.jpg)
 
 ## 前言
+
+
 
 一直以来都是学习慕课的实战视频，虽然也跟着做出了一些东西，但是思路都是别人提供好的，脱离了老师，我一直在问自己一个问题：**能不能独立地按照自己的思路做出一些东西来？**
 
@@ -53,8 +57,9 @@
 
 ## 项目进展
 
-- [x] 2018/12/31 完成了聚合工程的创建、Eureka服务注册中心、spring cloud config+gitHub+spring cloud bus（rabbit）实现配置自动刷新
-- [ ] 2018/12/31 要完成用户模块
+- [x] 2018/12/31 完成了聚合工程的创建、Eureka服务注册中心、spring cloud config+gitHub+spring cloud bus（rabbitMQ）实现配置自动刷新
+- [x] 2018/12/31 将Eureka注册中心(单机)和配置中心部署到服务器上，这比较固定，所以先部署上去，以后本地就直接用这两个即可
+- [ ] 
 
 ## 项目详细描述
 

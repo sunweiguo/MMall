@@ -11,6 +11,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>snailmall-eureka-server</name>
     <description>服务注册中心</description>
+    <packaging>jar</packaging>
 
     <properties>
         <java.version>1.8</java.version>
