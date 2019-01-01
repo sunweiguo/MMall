@@ -59,7 +59,7 @@ public class UserServiceImpl implements IUserService{
         userResVO.setCreateTime(resultUser.getCreateTime());
         userResVO.setUpdateTime(new Date());
 
-        return ServerResponse.createBySuccess(userResVO);
+        return ServerResponse.createBySuccess("用户登陆成功",userResVO);
     }
 
     @Override
@@ -142,6 +142,7 @@ public class UserServiceImpl implements IUserService{
         }
         return ServerResponse.createBySuccess("校验成功，用户名和邮箱都合法");
     }
+
 
 
 }

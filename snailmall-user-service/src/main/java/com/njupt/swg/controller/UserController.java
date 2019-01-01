@@ -10,9 +10,11 @@ import com.njupt.swg.entity.User;
 import com.njupt.swg.service.IUserService;
 import com.njupt.swg.vo.UserResVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -36,7 +38,8 @@ public class UserController {
      * 用户登陆：验证参数、登陆、写到cookie中并且写到redis中
      * 用户登陆以后，点击其他需要登陆才能看的页面时，先判断是否前端是否有这个key，没有则提示需要登陆
      */
-    @PostMapping("/login.do")
+    //TODO 登陆接口暂时开放GET请求，便于测试
+    @GetMapping("/login.do")
     public ServerResponse<UserResVO> login(HttpSession session, HttpServletResponse response, String username, String password){
         log.info("【用户{}开始登陆】",username);
         ServerResponse<UserResVO> userVOServerResponse = userService.login(username,password);
@@ -59,7 +62,7 @@ public class UserController {
     @PostMapping("/register.do")
     public ServerResponse register(User user){
         log.info("【开始注册】");
-        //TODO 这里模拟高并发的注册场景，防止用户名字注册重复，所以需要加上分布式锁
+        //这里模拟高并发的注册场景，防止用户名字注册重复，所以需要加上分布式锁
         ServerResponse response = userService.register(user);
 
         return response;
@@ -73,6 +76,34 @@ public class UserController {
                                      @RequestParam("type") String type){
         ServerResponse response = userService.checkValid(str,type);
         return response;
+    }
+
+    /**
+     * 获取登陆状态用户信息
+     * 本地测试的时候，由于cookie是写到oursnai.cn域名下面的，所以需要在hosts文件中添加127.0.0.1 oursnail.cn这个解析
+     * 在浏览器中测试的时候，将login方法暂时开放为GET请求，然后请求路径为：http://oursnail.cn:8081/user/login.do?username=admin&password=123456
+     * 同样地，在测试获取登陆用户信息接口，也要按照域名来请求，否则拿不到token：http://oursnail.cn:8081/user/get_user_info.do
+     */
+    @RequestMapping("/get_user_info.do")
+    public ServerResponse getUserInfo(HttpServletRequest request){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if(StringUtils.isEmpty(loginToken)){
+            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
+        }
+        String userStr = commonCacheUtil.getCacheValue(loginToken);
+        if(userStr == null){
+            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
+        }
+        User currentUser = JsonUtil.Str2Obj(userStr,User.class);
+        UserResVO userResVO = new UserResVO();
+        userResVO.setId(currentUser.getId());
+        userResVO.setUsername(currentUser.getUsername());
+        userResVO.setEmail(currentUser.getEmail());
+        userResVO.setPhone(currentUser.getPhone());
+        userResVO.setRole(currentUser.getRole());
+        userResVO.setCreateTime(currentUser.getCreateTime());
+        userResVO.setUpdateTime(currentUser.getUpdateTime());
+        return ServerResponse.createBySuccess("登陆用户获取自身信息成功",userResVO);
     }
 
 

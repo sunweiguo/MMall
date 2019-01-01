@@ -19,4 +19,5 @@ public interface IUserService {
 
     /** 判断用户名和邮箱是否重复 **/
     ServerResponse checkValid(String str, String type);
+
 }
