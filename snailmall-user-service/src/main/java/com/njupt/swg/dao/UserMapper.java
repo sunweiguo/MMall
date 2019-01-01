@@ -29,4 +29,8 @@ public interface UserMapper {
     User selectByUsernameAndPasswd(@Param("username") String username,@Param("password") String md5Passwd);
 
     Integer selectByEmail(String str);
+
+    User getUserByUsername(String username);
+
+    User getUserByUsernameQuestionAnswer(String username, String question, String answer);
 }

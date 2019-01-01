@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
  * @Author swg.
  * @Date 2019/1/1 15:00
  * @CONTACT 317758022@qq.com
- * @DESC
+ * @DESC 只做了单个redis，但是课程中实现的redis客户端集群，要掌握一致性hash算法
  */
 @Component
 @Slf4j

@@ -15,7 +15,11 @@ public class Constants {
     public static final int RESP_STATUS_INTERNAL_ERROR = 500;
 
     public static final int RESP_STATUS_BADREQUEST = 400;
+
     /**自定义状态码 end**/
+
+    /***redis user相关的key以这个打头**/
+    public static final String TOKEN_PREFIX = "user_";
 
     /**
      * 用户登陆redis的过期时间

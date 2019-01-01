@@ -70,7 +70,7 @@ public class UserController {
     /**
      * 判断用户名和邮箱是否重复
      */
-    @RequestMapping("/check_valid.do")
+    @GetMapping("/check_valid.do")
     public ServerResponse checkValid(@RequestParam("str") String str,
                                      @RequestParam("type") String type){
         ServerResponse response = userService.checkValid(str,type);
@@ -83,7 +83,7 @@ public class UserController {
      * 在浏览器中测试的时候，将login方法暂时开放为GET请求，然后请求路径为：http://oursnail.cn:8081/user/login.do?username=admin&password=123456
      * 同样地，在测试获取登陆用户信息接口，也要按照域名来请求，否则拿不到token：http://oursnail.cn:8081/user/get_user_info.do
      */
-    @RequestMapping("/get_user_info.do")
+    @GetMapping("/get_user_info.do")
     public ServerResponse getUserInfo(HttpServletRequest request){
         String loginToken = CookieUtil.readLoginToken(request);
         if(StringUtils.isEmpty(loginToken)){
@@ -103,6 +103,35 @@ public class UserController {
         userResVO.setCreateTime(currentUser.getCreateTime());
         userResVO.setUpdateTime(currentUser.getUpdateTime());
         return ServerResponse.createBySuccess("登陆用户获取自身信息成功",userResVO);
+    }
+
+
+    /**
+     * 根据用户名去拿到对应的问题
+     */
+    @PostMapping("/forget_get_question.do")
+    public ServerResponse forgetGetQuestion(String username){
+        ServerResponse response = userService.getQuestionByUsername(username);
+        return response;
+    }
+
+    /**
+     * 校验答案是否正确
+     */
+    @PostMapping("/forget_check_answer.do")
+    public ServerResponse forgetCheckAnswer(String username,String question,String answer){
+        ServerResponse response = userService.checkAnswer(username,question,answer);
+        return response;
+    }
+
+
+    /**
+     * 重置密码
+     */
+    @PostMapping("/forget_reset_password.do")
+    public ServerResponse forgetResetPasswd(String username,String passwordNew,String forgetToken){
+        ServerResponse response = userService.ResetPasswd(username,passwordNew,forgetToken);
+        return response;
     }
 
 

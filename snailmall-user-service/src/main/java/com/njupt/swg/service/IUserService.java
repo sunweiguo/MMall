@@ -20,4 +20,12 @@ public interface IUserService {
     /** 判断用户名和邮箱是否重复 **/
     ServerResponse checkValid(String str, String type);
 
+    /** 根据用户名去获取设置的忘记密码的问题 **/
+    ServerResponse getQuestionByUsername(String username);
+
+    /** 校验问题对应的答案是否正确 **/
+    ServerResponse checkAnswer(String username, String question, String answer);
+
+    /** 重置密码 **/
+    ServerResponse ResetPasswd(String username, String passwordNew, String forgetToken);
 }

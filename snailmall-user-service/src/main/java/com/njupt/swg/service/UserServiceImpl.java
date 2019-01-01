@@ -1,5 +1,6 @@
 package com.njupt.swg.service;
 
+import com.njupt.swg.cache.CommonCacheUtil;
 import com.njupt.swg.common.constants.Constants;
 import com.njupt.swg.common.exception.SnailmallException;
 import com.njupt.swg.common.resp.ServerResponse;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,6 +33,8 @@ public class UserServiceImpl implements IUserService{
     private UserMapper userMapper;
     @Autowired
     private CuratorFramework zkClient;
+    @Autowired
+    private CommonCacheUtil commonCacheUtil;
 
     @Override
     public ServerResponse<UserResVO> login(String username,String password) {
@@ -143,6 +147,79 @@ public class UserServiceImpl implements IUserService{
         return ServerResponse.createBySuccess("校验成功，用户名和邮箱都合法");
     }
 
+    @Override
+    public ServerResponse getQuestionByUsername(String username) {
+        //1.校验参数
+        if(StringUtils.isBlank(username)){
+            return ServerResponse.createByErrorMessage("用户名不能为空");
+        }
+        //2.根据username去获取题目
+        User user = userMapper.getUserByUsername(username);
+        if(user == null){
+            return ServerResponse.createByErrorMessage("用户不存在");
+        }
+        String question = user.getQuestion();
+        if(StringUtils.isBlank(question)){
+            return ServerResponse.createByErrorMessage("该用户没有设置对应的问题");
+        }
+        return ServerResponse.createBySuccess(question);
+    }
+
+    @Override
+    public ServerResponse checkAnswer(String username, String question, String answer) {
+        //1.校验参数是否正确
+        if(StringUtils.isBlank(username) || StringUtils.isBlank(question) || StringUtils.isBlank(answer)){
+            return ServerResponse.createByErrorMessage("参数有问题");
+        }
+        //2.参数没有问题之后，就可以去校验答案是否正确了
+        User user = userMapper.getUserByUsernameQuestionAnswer(username,question,answer);
+        if(user != null){
+            //首先根据规则key去redis取，如果还有没有过期的key，就可以直接拿来用了，不用再重新生成
+            String forgetToken = commonCacheUtil.getCacheValue(Constants.TOKEN_PREFIX+username);
+            if(StringUtils.isNotBlank(forgetToken)){
+                return ServerResponse.createBySuccess(forgetToken);
+            }
+            //取不到值，并且答案是对的，那么就重新生成一下吧！
+            forgetToken = UUID.randomUUID().toString();
+            commonCacheUtil.cacheNxExpire(Constants.TOKEN_PREFIX+username,forgetToken,60*60*12);
+            return ServerResponse.createBySuccess(forgetToken);
+        }
+        return ServerResponse.createByErrorMessage("问题答案有误");
+    }
+
+    @Override
+    public ServerResponse ResetPasswd(String username, String passwordNew, String forgetToken) {
+        //1.校验参数
+        if(StringUtils.isBlank(username) || StringUtils.isBlank(passwordNew) || StringUtils.isBlank(forgetToken)){
+            return ServerResponse.createByErrorMessage("参数有误，修改密码操作失败");
+        }
+        //2.根据username去获取用户
+        User user = userMapper.getUserByUsername(username);
+        if(user == null){
+            return ServerResponse.createByErrorMessage("用户名不存在，修改密码操作失败");
+        }
+        //3.从redis中获取token，看是否超时
+        String redisToken = commonCacheUtil.getCacheValue(Constants.TOKEN_PREFIX+username);
+        if(redisToken == null){
+            return ServerResponse.createByErrorMessage("token已经过期，修改密码操作失败");
+        }
+        //4.看前端传过来的token与redis中取出来的token是否相等
+        if(!StringUtils.equals(redisToken,forgetToken)){
+            return ServerResponse.createByErrorMessage("token错误，修改密码操作失败");
+        }
+        //5.判断密码是否重复
+        String MD5Passwd = MD5Util.MD5EncodeUtf8(passwordNew);
+        if(user.getPassword().equals(MD5Passwd)){
+            return ServerResponse.createByErrorMessage("不要使用重复密码！");
+        }
+        //6.重置密码
+        user.setPassword(MD5Passwd);
+        int result = userMapper.updateByPrimaryKeySelective(user);
+        if(result > 0){
+            return ServerResponse.createBySuccessMessage("修改密码成功");
+        }
+        return ServerResponse.createByErrorMessage("修改密码失败");
+    }
 
 
 }

@@ -174,4 +174,21 @@
     where username = #{username}
     and password = #{password}
   </select>
+
+  <select id="getUserByUsername"  resultMap="BaseResultMap" parameterType="string" >
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_user
+    where username = #{username}
+  </select>
+
+
+  <select id="getUserByUsernameQuestionAnswer"  resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_user
+    where username = #{username}
+    and question = #{question}
+    and answer = #{answer}
+  </select>
 </mapper>
