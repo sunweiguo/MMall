@@ -1,6 +1,8 @@
 package com.njupt.swg.service;
 
+import com.njupt.swg.common.resp.ServerResponse;
 import com.njupt.swg.entity.User;
+import com.njupt.swg.vo.UserResVO;
 
 /**
  * @Author swg.
@@ -9,5 +11,12 @@ import com.njupt.swg.entity.User;
  * @DESC
  */
 public interface IUserService {
-    public User getUserById(int id);
+    /** 用户登陆 **/
+    ServerResponse<UserResVO> login(String username,String password);
+
+    /** 用户注册 **/
+    ServerResponse register(User user);
+
+    /** 判断用户名和邮箱是否重复 **/
+    ServerResponse checkValid(String str, String type);
 }

@@ -2,6 +2,7 @@ package com.njupt.swg.dao;
 
 import com.njupt.swg.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @Author swg.
@@ -23,4 +24,9 @@ public interface UserMapper {
 
     int updateByPrimaryKey(User record);
 
+    Integer selectByUsername(String username);
+
+    User selectByUsernameAndPasswd(@Param("username") String username,@Param("password") String md5Passwd);
+
+    Integer selectByEmail(String str);
 }

@@ -1,4 +1,4 @@
-package com.njupt.swg.common;
+package com.njupt.swg.common.resp;
 
 import lombok.Getter;
 

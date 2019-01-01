@@ -1,7 +1,7 @@
-package com.njupt.swg.common;
+package com.njupt.swg.common.resp;
 
-import lombok.Data;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.io.Serializable;
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @CONTACT 317758022@qq.com
  * @DESC 作为本项目的通用的返回封装类
  */
-@Data
+@Getter
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ServerResponse<T> implements Serializable {
     private int status;
