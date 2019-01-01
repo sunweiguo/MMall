@@ -1,7 +1,6 @@
 package com.njupt.swg.controller;
 
 import com.njupt.swg.cache.CommonCacheUtil;
-import com.njupt.swg.cache.Parameters;
 import com.njupt.swg.common.constants.Constants;
 import com.njupt.swg.common.resp.ServerResponse;
 import com.njupt.swg.common.utils.CookieUtil;
