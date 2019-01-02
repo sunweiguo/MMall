@@ -23,6 +23,8 @@ import javax.servlet.http.HttpSession;
  * @CONTACT 317758022@qq.com
  * @DESC 用户模块，POSTMAN简单测试通过
  */
+
+//TODO 先全部开放GET请求
 @RequestMapping("user")
 @RestController
 @Slf4j
@@ -37,7 +39,7 @@ public class UserController {
      * 用户登陆：验证参数、登陆、写到cookie中并且写到redis中
      * 用户登陆以后，点击其他需要登陆才能看的页面时，先判断是否前端是否有这个key，没有则提示需要登陆
      */
-    @GetMapping("/login.do")
+    @RequestMapping("/login.do")
     public ServerResponse<UserResVO> login(HttpSession session, HttpServletResponse response, String username, String password){
         log.info("【用户{}开始登陆】",username);
         ServerResponse<UserResVO> userVOServerResponse = userService.login(username,password);
@@ -57,7 +59,7 @@ public class UserController {
     /**
      * 用户注册，要判断用户名和邮箱是否重复，这里用了分布式锁来防止用户名和邮箱可能出现重复
      */
-    @PostMapping("/register.do")
+    @RequestMapping("/register.do")
     public ServerResponse register(User user){
         log.info("【开始注册】");
         //这里模拟高并发的注册场景，防止用户名字注册重复，所以需要加上分布式锁
@@ -69,7 +71,7 @@ public class UserController {
     /**
      * 判断用户名和邮箱是否重复
      */
-    @PostMapping("/check_valid.do")
+    @RequestMapping("/check_valid.do")
     public ServerResponse checkValid(@RequestParam("str") String str,
                                      @RequestParam("type") String type){
         log.info("【开始验证用户名和邮箱是否重复】");
@@ -83,7 +85,7 @@ public class UserController {
      * 在浏览器中测试的时候，将login方法暂时开放为GET请求，然后请求路径为：http://oursnail.cn:8081/user/login.do?username=admin&password=123456
      * 同样地，在测试获取登陆用户信息接口，也要按照域名来请求，否则拿不到token：http://oursnail.cn:8081/user/get_user_info.do
      */
-    @PostMapping("/get_user_info.do")
+    @RequestMapping("/get_user_info.do")
     public ServerResponse getUserInfo(HttpServletRequest request){
         String loginToken = CookieUtil.readLoginToken(request);
         if(StringUtils.isEmpty(loginToken)){
@@ -111,7 +113,7 @@ public class UserController {
     /**
      * 根据用户名去拿到对应的问题
      */
-    @PostMapping("/forget_get_question.do")
+    @RequestMapping("/forget_get_question.do")
     public ServerResponse forgetGetQuestion(String username){
         log.info("【用户{}忘记密码，点击忘记密码输入用户名】",username);
         ServerResponse response = userService.getQuestionByUsername(username);
@@ -121,7 +123,7 @@ public class UserController {
     /**
      * 校验答案是否正确
      */
-    @PostMapping("/forget_check_answer.do")
+    @RequestMapping("/forget_check_answer.do")
     public ServerResponse forgetCheckAnswer(String username,String question,String answer){
         log.info("【用户{}忘记密码，提交问题答案】",username);
         ServerResponse response = userService.checkAnswer(username,question,answer);
@@ -132,7 +134,7 @@ public class UserController {
     /**
      * 忘记密码的重置密码
      */
-    @PostMapping("/forget_reset_password.do")
+    @RequestMapping("/forget_reset_password.do")
     public ServerResponse forgetResetPasswd(String username,String passwordNew,String forgetToken){
         log.info("【用户{}忘记密码，输入新密码】",username);
         ServerResponse response = userService.forgetResetPasswd(username,passwordNew,forgetToken);
@@ -142,7 +144,7 @@ public class UserController {
     /**
      * 登陆状态的重置密码
      */
-    @PostMapping("/reset_password.do")
+    @RequestMapping("/reset_password.do")
     public ServerResponse resetPasswd(String passwordOld,String passwordNew,HttpServletRequest request){
         //1.读取cookie
         String loginToken = CookieUtil.readLoginToken(request);
@@ -164,7 +166,7 @@ public class UserController {
     /**
      * 更新当前登陆用户信息
      */
-    @PostMapping("/update_information.do")
+    @RequestMapping("/update_information.do")
     public ServerResponse updateInformation(String email,String phone,String question,String answer,HttpServletRequest request){
         //1.读取cookie
         String loginToken = CookieUtil.readLoginToken(request);
@@ -185,7 +187,7 @@ public class UserController {
     /**
      * 登出,删除cookie和redis即可
      */
-    @PostMapping("/logout.do")
+    @RequestMapping("/logout.do")
     public ServerResponse logout(HttpServletRequest request,HttpServletResponse response){
         log.info("【用户删除cookie】");
         //1.删除cookie
