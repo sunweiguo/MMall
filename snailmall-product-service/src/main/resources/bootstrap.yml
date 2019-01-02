@@ -1,0 +1,41 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://111.231.119.253:8761/eureka
+spring:
+  application:
+    name: product-service
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: SNAILMALL-CONFIG-SERVER
+      profile: dev
+    bus:
+      trace:
+        enabled: true
+      enabled: true
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+server:
+  port: 8083
+logging:
+  config: classpath:logback.xml
+mybatis:
+  mapper-locations: classpath:com/njupt/swg/**/**.xml
+  type-aliases-package: classpath:com.njupt.swg.**.entity
+
