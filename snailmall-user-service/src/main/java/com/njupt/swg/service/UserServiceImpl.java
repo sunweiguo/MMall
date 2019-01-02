@@ -188,7 +188,7 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public ServerResponse ResetPasswd(String username, String passwordNew, String forgetToken) {
+    public ServerResponse forgetResetPasswd(String username, String passwordNew, String forgetToken) {
         //1.校验参数
         if(StringUtils.isBlank(username) || StringUtils.isBlank(passwordNew) || StringUtils.isBlank(forgetToken)){
             return ServerResponse.createByErrorMessage("参数有误，修改密码操作失败");
@@ -219,6 +219,65 @@ public class UserServiceImpl implements IUserService{
             return ServerResponse.createBySuccessMessage("修改密码成功");
         }
         return ServerResponse.createByErrorMessage("修改密码失败");
+    }
+
+    @Override
+    public ServerResponse resetPasswd(String passwordOld, String passwordNew, int userId) {
+        //1.校验参数
+        if(StringUtils.isBlank(passwordOld) || StringUtils.isBlank(passwordNew)){
+            return ServerResponse.createByErrorMessage("参数有误");
+        }
+        User user = userMapper.selectByPrimaryKey(userId);
+        if (user == null){
+            return ServerResponse.createByErrorMessage("无用户登陆");
+        }
+        //2.校验老的密码
+        String passwordOldMD5 = MD5Util.MD5EncodeUtf8(passwordOld);
+        if(!StringUtils.equals(passwordOldMD5,user.getPassword())){
+            return ServerResponse.createByErrorMessage("老密码输错啦...");
+        }
+        //3.重置新的密码
+        user.setPassword(MD5Util.MD5EncodeUtf8(passwordNew));
+        int updateCount = userMapper.updateByPrimaryKeySelective(user);
+        if(updateCount > 0){
+            return ServerResponse.createBySuccessMessage("更新密码成功");
+        }
+        return ServerResponse.createByErrorMessage("更新密码失败");
+    }
+
+    @Override
+    public ServerResponse updateInfomation(String email, String phone, String question, String answer, Integer userId) {
+        //1.获取当前登陆用户
+        User user = userMapper.selectByPrimaryKey(userId);
+        if (user == null){
+            return ServerResponse.createByErrorMessage("获取当前登陆用户失败，请重新登陆");
+        }
+        //2.修改用户信息应该并发不大，所以不用加锁了，这里校验邮箱是否重复
+        if(email != null && StringUtils.isNotBlank(email)){
+            ServerResponse response = this.checkValid(email,Constants.EMAIL);
+            if(!response.isSuccess()){
+                //说明用户名已经重复了
+                return response;
+            }
+        }
+        //3.没有问题就可以更新了
+        if(StringUtils.isNotBlank(email)){
+            user.setEmail(email);
+        }
+        if(StringUtils.isNotBlank(phone)){
+            user.setPhone(phone);
+        }
+        if(StringUtils.isNotBlank(question)){
+            user.setQuestion(question);
+        }
+        if(StringUtils.isNotBlank(answer)){
+            user.setAnswer(answer);
+        }
+        int updateCount = userMapper.updateByPrimaryKeySelective(user);
+        if(updateCount > 0){
+            return ServerResponse.createBySuccessMessage("更新信息成功");
+        }
+        return ServerResponse.createByErrorMessage("更新用户信息失败");
     }
 
 

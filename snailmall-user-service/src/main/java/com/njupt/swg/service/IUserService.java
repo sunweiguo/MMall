@@ -27,5 +27,11 @@ public interface IUserService {
     ServerResponse checkAnswer(String username, String question, String answer);
 
     /** 重置密码 **/
-    ServerResponse ResetPasswd(String username, String passwordNew, String forgetToken);
+    ServerResponse forgetResetPasswd(String username, String passwordNew, String forgetToken);
+
+    /** 登陆状态下重置密码 **/
+    ServerResponse resetPasswd(String passwordOld, String passwordNew, int userId);
+
+    /** 登陆状态下更新个人信息（更新策略为：如果用户某一项不填，表示保持原样不变） **/
+    ServerResponse updateInfomation(String email, String phone, String question, String answer, Integer userId);
 }
