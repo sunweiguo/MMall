@@ -7,9 +7,9 @@
         <artifactId>spring-cloud-for-snailmall</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>snailmall-user-service</artifactId>
+    <artifactId>snailmall-category-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>snailmall-user-service</name>
+    <name>snailmall-category-service</name>
     <description>Demo project for Spring Boot</description>
 
     <dependencies>
@@ -76,22 +76,6 @@
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
         </dependency>
-        <!--joda time-->
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-
-        <!--curator-->
-        <dependency>
-            <groupId>org.apache.curator</groupId>
-            <artifactId>curator-framework</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.curator</groupId>
-            <artifactId>curator-recipes</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>

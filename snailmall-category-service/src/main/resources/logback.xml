@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_HOME" value="/logs/user/" />
+    <property name="LOG_HOME" value="/logs/category/" />
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

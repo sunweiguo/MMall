@@ -13,7 +13,7 @@ spring:
           uri: https://github.com/sunweiguo/config-center-for-snailmall
           username: sunweiguo
           password: 22daguozi
-          search-paths: user-service-config
+          search-paths: user-service-config,category-service-config,product-service-config,order-service-config,address-service-config,shipping-service-config,cart-service-config
     bus:
       trace:
         enabled: true

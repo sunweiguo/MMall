@@ -18,6 +18,7 @@
     <modules>
         <module>snailmall-eureka-server</module>
         <module>snailmall-config-server</module>
+        <module>snailmall-category-service</module>
     </modules>
 
     <properties>
