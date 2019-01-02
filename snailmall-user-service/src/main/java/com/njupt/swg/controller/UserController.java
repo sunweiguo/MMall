@@ -37,7 +37,7 @@ public class UserController {
      * 用户登陆：验证参数、登陆、写到cookie中并且写到redis中
      * 用户登陆以后，点击其他需要登陆才能看的页面时，先判断是否前端是否有这个key，没有则提示需要登陆
      */
-    @PostMapping("/login.do")
+    @GetMapping("/login.do")
     public ServerResponse<UserResVO> login(HttpSession session, HttpServletResponse response, String username, String password){
         log.info("【用户{}开始登陆】",username);
         ServerResponse<UserResVO> userVOServerResponse = userService.login(username,password);

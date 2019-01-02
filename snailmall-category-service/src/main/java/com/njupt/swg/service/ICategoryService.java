@@ -1,5 +1,6 @@
 package com.njupt.swg.service;
 
+import com.njupt.swg.common.resp.ServerResponse;
 import com.njupt.swg.entity.Category;
 
 /**
@@ -9,5 +10,16 @@ import com.njupt.swg.entity.Category;
  * @DESC
  */
 public interface ICategoryService {
-    Category test();
+
+    /** 根据类目id获取其下面所有的一级子类目 **/
+    ServerResponse getCategory(Integer categoryId);
+
+    /** 新建一个商品类目 **/
+    ServerResponse addCategory(String categoryName, int parentId);
+
+    /** 更新品类名称 **/
+    ServerResponse<String> updateCategoryName(String categoryName, Integer categoryId);
+
+    /** 递归查询出所有品类 **/
+    ServerResponse selectCategoryAndDeepChildrenById(Integer categoryId);
 }
