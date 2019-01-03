@@ -37,23 +37,6 @@ public class CategoryController {
      */
     @RequestMapping("get_category.do")
     public ServerResponse getCategory(HttpServletRequest request, @RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId){
-        //校验是否为管理员身份
-        String loginToken = CookieUtil.readLoginToken(request);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
-        }
-        //2.从redis中获取用户信息
-        String userStr = commonCacheUtil.getCacheValue(loginToken);
-        if(userStr == null){
-            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
-        }
-        User currentUser = JsonUtil.Str2Obj(userStr,User.class);
-
-        if(!currentUser.getRole().equals(Constants.Role.ROLE_ADMIN)){
-            //不是管理员报错
-            return ServerResponse.createByErrorMessage("权限不够");
-        }
-
         ServerResponse response = categoryService.getCategory(categoryId);
         return response;
     }
@@ -63,23 +46,6 @@ public class CategoryController {
      */
     @RequestMapping("add_category.do")
     public ServerResponse addCategory(HttpServletRequest request, String categoryName, @RequestParam(value = "parentId",defaultValue = "0")int parentId){
-        //校验是否为管理员身份
-        String loginToken = CookieUtil.readLoginToken(request);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
-        }
-        //2.从redis中获取用户信息
-        String userStr = commonCacheUtil.getCacheValue(loginToken);
-        if(userStr == null){
-            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
-        }
-        User currentUser = JsonUtil.Str2Obj(userStr,User.class);
-
-        if(!currentUser.getRole().equals(Constants.Role.ROLE_ADMIN)){
-            //不是管理员报错
-            return ServerResponse.createByErrorMessage("权限不够");
-        }
-
         ServerResponse response = categoryService.addCategory(categoryName,parentId);
         return response;
     }
@@ -89,23 +55,6 @@ public class CategoryController {
      */
     @RequestMapping("set_category_name.do")
     public ServerResponse<String> set_category_name(HttpServletRequest request, String categoryName,Integer categoryId){
-        //校验是否为管理员身份
-        String loginToken = CookieUtil.readLoginToken(request);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
-        }
-        //2.从redis中获取用户信息
-        String userStr = commonCacheUtil.getCacheValue(loginToken);
-        if(userStr == null){
-            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
-        }
-        User currentUser = JsonUtil.Str2Obj(userStr,User.class);
-
-        if(!currentUser.getRole().equals(Constants.Role.ROLE_ADMIN)){
-            //不是管理员报错
-            return ServerResponse.createByErrorMessage("权限不够");
-        }
-
         return categoryService.updateCategoryName(categoryName,categoryId);
     }
 
@@ -114,23 +63,6 @@ public class CategoryController {
      */
     @RequestMapping("get_deep_category.do")
     public ServerResponse get_deep_category(HttpServletRequest request,@RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId){
-        //校验是否为管理员身份
-        String loginToken = CookieUtil.readLoginToken(request);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
-        }
-        //2.从redis中获取用户信息
-        String userStr = commonCacheUtil.getCacheValue(loginToken);
-        if(userStr == null){
-            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
-        }
-        User currentUser = JsonUtil.Str2Obj(userStr,User.class);
-
-        if(!currentUser.getRole().equals(Constants.Role.ROLE_ADMIN)){
-            //不是管理员报错
-            return ServerResponse.createByErrorMessage("权限不够");
-        }
-
         return categoryService.selectCategoryAndDeepChildrenById(categoryId);
     }
 

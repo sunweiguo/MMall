@@ -28,6 +28,6 @@ public class Parameters {
     private int redisMaxWaitMillis;
     /*****redis config end*******/
 
-    @Value("#{'${security.noneSecurityPortalPaths}'.split(',')}")
-    private List<String> noneSecurityPortalPaths;
+    @Value("#{'${security.noneSecurityAdminPaths}'.split(',')}")
+    private List<String> noneSecurityAdminPaths;
 }

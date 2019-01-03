@@ -20,6 +20,10 @@ server:
   port: 8079
 zuul:
   routes:
+    category:
+      path: /category/**/
+      serviceId: category-service
+      sensitiveHeaders:
     user:
       path: /user/**/
       serviceId: user-service
