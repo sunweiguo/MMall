@@ -18,13 +18,5 @@ public class Constants {
 
     /**自定义状态码 end**/
 
-    /***redis user相关的key以这个打头**/
-    public static final String TOKEN_PREFIX = "user_";
-
-    /** 用户角色 **/
-    public interface Role{
-        int ROLE_CUSTOME = 0;//普通用户
-        int ROLE_ADMIN = 1;//管理员用户
-    }
 
 }

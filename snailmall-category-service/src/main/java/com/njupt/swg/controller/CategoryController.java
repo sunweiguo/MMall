@@ -1,19 +1,12 @@
 package com.njupt.swg.controller;
 
-import com.njupt.swg.cache.CommonCacheUtil;
-import com.njupt.swg.common.constants.Constants;
 import com.njupt.swg.common.resp.ServerResponse;
-import com.njupt.swg.common.utils.CookieUtil;
-import com.njupt.swg.common.utils.JsonUtil;
-import com.njupt.swg.entity.User;
 import com.njupt.swg.service.ICategoryService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Author swg.
@@ -29,14 +22,12 @@ import javax.servlet.http.HttpServletRequest;
 public class CategoryController {
     @Autowired
     private ICategoryService categoryService;
-    @Autowired
-    private CommonCacheUtil commonCacheUtil;
 
     /**
      * 获取品类子节点(平级)
      */
     @RequestMapping("get_category.do")
-    public ServerResponse getCategory(HttpServletRequest request, @RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId){
+    public ServerResponse getCategory(@RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId){
         ServerResponse response = categoryService.getCategory(categoryId);
         return response;
     }
@@ -45,7 +36,7 @@ public class CategoryController {
      * 增加节点
      */
     @RequestMapping("add_category.do")
-    public ServerResponse addCategory(HttpServletRequest request, String categoryName, @RequestParam(value = "parentId",defaultValue = "0")int parentId){
+    public ServerResponse addCategory(String categoryName, @RequestParam(value = "parentId",defaultValue = "0")int parentId){
         ServerResponse response = categoryService.addCategory(categoryName,parentId);
         return response;
     }
@@ -54,7 +45,7 @@ public class CategoryController {
      * 修改品类名称
      */
     @RequestMapping("set_category_name.do")
-    public ServerResponse<String> set_category_name(HttpServletRequest request, String categoryName,Integer categoryId){
+    public ServerResponse<String> set_category_name(String categoryName,Integer categoryId){
         return categoryService.updateCategoryName(categoryName,categoryId);
     }
 
@@ -62,7 +53,7 @@ public class CategoryController {
      * 递归获取自身和所有的子节点
      */
     @RequestMapping("get_deep_category.do")
-    public ServerResponse get_deep_category(HttpServletRequest request,@RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId){
+    public ServerResponse get_deep_category(@RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId){
         return categoryService.selectCategoryAndDeepChildrenById(categoryId);
     }
 
