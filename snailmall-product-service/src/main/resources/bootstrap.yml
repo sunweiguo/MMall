@@ -38,4 +38,3 @@ logging:
 mybatis:
   mapper-locations: classpath:com/njupt/swg/**/**.xml
   type-aliases-package: classpath:com.njupt.swg.**.entity
-

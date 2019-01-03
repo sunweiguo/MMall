@@ -22,4 +22,8 @@ public interface ICategoryService {
 
     /** 递归查询出所有品类 **/
     ServerResponse selectCategoryAndDeepChildrenById(Integer categoryId);
+
+
+    /** 被其他服务调用的接口 **/
+    ServerResponse getCategoryDetail(Integer categoryId);
 }

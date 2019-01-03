@@ -114,4 +114,17 @@ public class CategoryServiceImpl implements ICategoryService{
         return categorySet;
     }
 
+
+    @Override
+    public ServerResponse getCategoryDetail(Integer categoryId) {
+        if(categoryId == null){
+            return ServerResponse.createByErrorMessage("参数不能为空");
+        }
+        Category category = categoryMapper.selectByPrimaryKey(categoryId);
+        if(category == null){
+            return ServerResponse.createByErrorMessage("品类不存在");
+        }
+        return ServerResponse.createBySuccess(category);
+    }
+
 }

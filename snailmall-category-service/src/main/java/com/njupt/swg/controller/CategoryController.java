@@ -58,6 +58,15 @@ public class CategoryController {
     }
 
 
+    /**
+     * 这是为了给其他服务调用而新增的接口
+     */
+    @RequestMapping("get_category_detail.do")
+    public ServerResponse get_category_detail(Integer categoryId){
+        return categoryService.getCategoryDetail(categoryId);
+    }
+
+
 
 
 }

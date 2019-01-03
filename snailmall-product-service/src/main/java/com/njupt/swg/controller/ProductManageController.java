@@ -2,9 +2,15 @@ package com.njupt.swg.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
-import com.njupt.swg.common.Parameters;
+import com.njupt.swg.cache.CommonCacheUtil;
+import com.njupt.swg.common.exception.SnailmallException;
 import com.njupt.swg.common.resp.ServerResponse;
+import com.njupt.swg.common.utils.CookieUtil;
+import com.njupt.swg.common.utils.JsonUtil;
+import com.njupt.swg.common.utils.PropertiesUtil;
 import com.njupt.swg.entity.Product;
+import com.njupt.swg.entity.User;
+import com.njupt.swg.service.IFileService;
 import com.njupt.swg.service.IProductService;
 import com.njupt.swg.vo.ProductDetailVo;
 import org.apache.commons.lang3.StringUtils;
@@ -24,13 +30,16 @@ import java.util.Map;
  * @CONTACT 317758022@qq.com
  * @DESC 后台商品服务
  */
+//TODO 上传图片和富文本上传没有实验，直接复制代码过来的，应该是可用的
 @RestController
 @RequestMapping("/manage/product")
 public class ProductManageController {
     @Autowired
     private IProductService productService;
     @Autowired
-    private Parameters parameters;
+    private IFileService fileService;
+    @Autowired
+    private CommonCacheUtil commonCacheUtil;
 
     /**
      * 产品list
@@ -59,14 +68,13 @@ public class ProductManageController {
     @RequestMapping("upload.do")
     public ServerResponse upload(@RequestParam(value = "upload_file",required = false) MultipartFile file, HttpServletRequest request){
         String path = request.getSession().getServletContext().getRealPath("upload");
-//        String targetFileName = fileService.upload(file,path);
-//        String url = parameters.getImageHost()+targetFileName;
+        String targetFileName = fileService.upload(file,path);
+        String url = PropertiesUtil.getProperty("ftp.server.http.prefix")+targetFileName;
 
         Map fileMap = Maps.newHashMap();
-//        fileMap.put("uri",targetFileName);
-//        fileMap.put("url",url);
+        fileMap.put("uri",targetFileName);
+        fileMap.put("url",url);
         return ServerResponse.createBySuccess(fileMap);
-
     }
 
     /**
@@ -95,22 +103,40 @@ public class ProductManageController {
 
     /**
      * 富文本上传图片
+     * 由于这里如果没有管理员权限，需要回复特定形式的信息，所以校验单独放在这里，zuul过滤器对其直接放过
      */
     @RequestMapping("richtext_img_upload.do")
-    public Map richtextImgUpload(@RequestParam(value = "upload_file",required = false) MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
+    public Map richtextImgUpload(@RequestParam(value = "upload_file",required = false) MultipartFile file, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if(StringUtils.isEmpty(loginToken)){
+            throw new SnailmallException("用户未登录,无法获取当前用户信息");
+        }
+        //2.从redis中获取用户信息
+        String userStr = commonCacheUtil.getCacheValue(loginToken);
+        if(userStr == null){
+            throw new SnailmallException("用户未登录,无法获取当前用户信息");
+        }
+
+        User user = JsonUtil.Str2Obj(userStr,User.class);
         Map resultMap = Maps.newHashMap();
-        String path = request.getSession().getServletContext().getRealPath("upload");
-//        String targetFileName = fileService.upload(file, path);
-//        if (StringUtils.isBlank(targetFileName)) {
-//            resultMap.put("success", false);
-//            resultMap.put("msg", "上传失败");
-//            return resultMap;
-//        }
-//        String url = parameters.getImageHost() + targetFileName;
+        if(user == null){
+            resultMap.put("success",false);
+            resultMap.put("msg","请登录管理员");
+            return resultMap;
+        }
+
+        String path = httpServletRequest.getSession().getServletContext().getRealPath("upload");
+        String targetFileName = fileService.upload(file, path);
+        if (StringUtils.isBlank(targetFileName)) {
+            resultMap.put("success", false);
+            resultMap.put("msg", "上传失败");
+            return resultMap;
+        }
+        String url = PropertiesUtil.getProperty("ftp.server.http.prefix")+targetFileName;
         resultMap.put("success", true);
         resultMap.put("msg", "上传成功");
-//        resultMap.put("file_path", url);
-        response.addHeader("Access-Control-Allow-Headers", "X-File-Name");
+        resultMap.put("file_path", url);
+        httpServletResponse.addHeader("Access-Control-Allow-Headers", "X-File-Name");
         return resultMap;
     }
 

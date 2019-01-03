@@ -1,5 +1,8 @@
 package com.njupt.swg.common.constants;
 
+import com.google.common.collect.Sets;
+import java.util.Set;
+
 /**
  * @Author swg.
  * @Date 2019/1/1 13:19
@@ -18,13 +21,17 @@ public class Constants {
 
     /**自定义状态码 end**/
 
-    /***redis user相关的key以这个打头**/
-    public static final String TOKEN_PREFIX = "user_";
 
-    /** 用户角色 **/
-    public interface Role{
-        int ROLE_CUSTOME = 0;//普通用户
-        int ROLE_ADMIN = 1;//管理员用户
+    /** 产品的状态 **/
+    public interface Product{
+        int PRODUCT_ON = 1;
+        int PRODUCT_OFF = 2;
+        int PRODUCT_DELETED = 3;
     }
+
+    public interface ProductListOrderBy{
+        Set<String> PRICE_ASC_DESC = Sets.newHashSet("price_desc","price_asc");
+    }
+
 
 }

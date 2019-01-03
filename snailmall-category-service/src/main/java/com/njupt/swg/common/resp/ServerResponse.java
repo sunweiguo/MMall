@@ -3,6 +3,7 @@ package com.njupt.swg.common.resp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -19,18 +20,20 @@ public class ServerResponse<T> implements Serializable {
     private String msg;
     private T data;
 
-    private ServerResponse(int status){
+    public ServerResponse(){}
+
+    public ServerResponse(int status){
         this.status = status;
     }
-    private ServerResponse(int status,String msg){
+    public ServerResponse(int status,String msg){
         this.status = status;
         this.msg = msg;
     }
-    private ServerResponse(int status,T data){
+    public ServerResponse(int status,T data){
         this.status = status;
         this.data = data;
     }
-    private ServerResponse(int status,String msg,T data){
+    public ServerResponse(int status,String msg,T data){
         this.status = status;
         this.msg = msg;
         this.data = data;
