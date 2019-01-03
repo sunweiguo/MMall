@@ -20,6 +20,9 @@
         <module>snailmall-config-server</module>
         <module>snailmall-category-service</module>
         <module>snailmall-api-gateway</module>
+        <module>snailmall-product-service</module>
+        <module>snailmall-cart-service</module>
+        <module>snailmall-user-service</module>
     </modules>
 
     <properties>
