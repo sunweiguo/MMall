@@ -28,3 +28,7 @@ zuul:
       path: /user/**/
       serviceId: user-service
       sensitiveHeaders:
+    prodcut:
+      path: /product/**/
+      serviceId: product-service
+      sensitiveHeaders:

@@ -1,5 +1,6 @@
 package com.njupt.swg.controller;
 
+import com.njupt.swg.resp.ResponseEnum;
 import com.njupt.swg.resp.ServerResponse;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,7 @@ public class ErrorHandleController implements ErrorController {
 
     @RequestMapping("/error")
     public ServerResponse error() {
-        return ServerResponse.createByErrorMessage("用户未登陆或者权限不足");
+        return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),"用户未登陆或者权限不足");
     }
 
 }
