@@ -1,7 +1,7 @@
 package com.njupt.swg.service;
 
+import com.njupt.swg.common.resp.ServerResponse;
 import com.njupt.swg.dao.CartMapper;
-import com.njupt.swg.entity.Cart;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,32 @@ public class CartServiceImpl implements ICartService{
     private CartMapper cartMapper;
 
     @Override
-    public Cart test() {
-        return cartMapper.selectByPrimaryKey(126);
+    public ServerResponse add(Integer id, Integer productId, Integer count) {
+        return null;
+    }
+
+    @Override
+    public ServerResponse update(Integer id, Integer productId, Integer count) {
+        return null;
+    }
+
+    @Override
+    public ServerResponse delete(Integer id, String productIds) {
+        return null;
+    }
+
+    @Override
+    public ServerResponse list(Integer id) {
+        return null;
+    }
+
+    @Override
+    public ServerResponse selectOrUnSelect(Integer id, int checked, Object o) {
+        return null;
+    }
+
+    @Override
+    public ServerResponse<Integer> get_cart_product_count(Integer id) {
+        return null;
     }
 }

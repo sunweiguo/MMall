@@ -79,7 +79,9 @@
 
 ## 项目详细描述
 
-待续...
+- 项目的接口文档详见wiki：https://github.com/sunweiguo/spring-cloud-for-snailmall/wiki
+- 项目的数据库表设计：snailmall.sql
+- 
 
 ## 项目启动
 

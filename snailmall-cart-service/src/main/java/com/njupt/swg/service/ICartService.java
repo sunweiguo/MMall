@@ -1,6 +1,6 @@
 package com.njupt.swg.service;
 
-import com.njupt.swg.entity.Cart;
+import com.njupt.swg.common.resp.ServerResponse;
 
 /**
  * @Author swg.
@@ -9,5 +9,22 @@ import com.njupt.swg.entity.Cart;
  * @DESC
  */
 public interface ICartService {
-    Cart test();
+
+    /**  购物车添加商品 **/
+    ServerResponse add(Integer id, Integer productId, Integer count);
+
+    /**  更新购物车某个产品数量  **/
+    ServerResponse update(Integer id, Integer productId, Integer count);
+
+    /**  移除购物车某个产品 **/
+    ServerResponse delete(Integer id, String productIds);
+
+    /**  购物车List列表 **/
+    ServerResponse list(Integer id);
+
+    /**  购物车选中/取消某个商品 **/
+    ServerResponse selectOrUnSelect(Integer id, int checked, Object o);
+
+    /**  查询在购物车里的产品数量 **/
+    ServerResponse<Integer> get_cart_product_count(Integer id);
 }
