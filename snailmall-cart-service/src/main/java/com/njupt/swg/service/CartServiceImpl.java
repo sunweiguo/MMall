@@ -19,32 +19,33 @@ public class CartServiceImpl implements ICartService{
     private CartMapper cartMapper;
 
     @Override
-    public ServerResponse add(Integer id, Integer productId, Integer count) {
+    public ServerResponse add(Integer userId, Integer productId, Integer count) {
+
         return null;
     }
 
     @Override
-    public ServerResponse update(Integer id, Integer productId, Integer count) {
+    public ServerResponse update(Integer userId, Integer productId, Integer count) {
         return null;
     }
 
     @Override
-    public ServerResponse delete(Integer id, String productIds) {
+    public ServerResponse delete(Integer userId, String productIds) {
         return null;
     }
 
     @Override
-    public ServerResponse list(Integer id) {
+    public ServerResponse list(Integer userId) {
         return null;
     }
 
     @Override
-    public ServerResponse selectOrUnSelect(Integer id, int checked, Object o) {
+    public ServerResponse selectOrUnSelect(Integer userId, int checked, Object o) {
         return null;
     }
 
     @Override
-    public ServerResponse<Integer> get_cart_product_count(Integer id) {
+    public ServerResponse<Integer> get_cart_product_count(Integer userId) {
         return null;
     }
 }
