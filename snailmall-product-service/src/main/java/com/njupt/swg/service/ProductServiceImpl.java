@@ -102,8 +102,11 @@ public class ProductServiceImpl implements IProductService{
         Product product = new Product();
         product.setId(productId);
         product.setStatus(status);
+        //3.删除该商品缓存
+        commonCacheUtil.delKey(Constants.PRODUCT_TOKEN_PREFIX);
         int rowCount = productMapper.updateByPrimaryKeySelective(product);
         if(rowCount > 0){
+            commonCacheUtil.cacheNxExpire(Constants.PRODUCT_TOKEN_PREFIX+productId,JsonUtil.obj2String(product),Constants.PRODUCT_EXPIRE_TIME);
             return ServerResponse.createBySuccessMessage("更新产品状态成功");
         }
         return ServerResponse.createByErrorMessage("更新产品状态失败");
@@ -124,9 +127,11 @@ public class ProductServiceImpl implements IProductService{
         }
         //3.看前端传过来的产品id是否存在，存在则为更新，否则为新增
         if(product.getId() != null){
-            //更新
+            //删除该商品缓存
+            commonCacheUtil.delKey(Constants.PRODUCT_TOKEN_PREFIX);
             int rowCount = productMapper.updateByPrimaryKeySelective(product);
             if(rowCount > 0){
+                commonCacheUtil.cacheNxExpire(Constants.PRODUCT_TOKEN_PREFIX+product.getId(),JsonUtil.obj2String(product),Constants.PRODUCT_EXPIRE_TIME);
                 return ServerResponse.createBySuccessMessage("更新产品成功");
             }
             return ServerResponse.createByErrorMessage("更新产品失败");
@@ -136,6 +141,7 @@ public class ProductServiceImpl implements IProductService{
             product.setUpdateTime(new Date());
             int rowCount = productMapper.insert(product);
             if(rowCount > 0){
+                commonCacheUtil.cacheNxExpire(Constants.PRODUCT_TOKEN_PREFIX+product.getId(),JsonUtil.obj2String(product),Constants.PRODUCT_EXPIRE_TIME);
                 return ServerResponse.createBySuccessMessage("新增产品成功");
             }
             return ServerResponse.createByErrorMessage("新增产品失败");
@@ -216,7 +222,7 @@ public class ProductServiceImpl implements IProductService{
             return ServerResponse.createByErrorMessage("参数错误");
         }
         //2.去redis中查询，没有则把商品重新添加进redis中
-        String redisProductStr = commonCacheUtil.getCacheValue(Constants.PRODUCT_STOCK_TOKEN_PREFIX+productId);
+        String redisProductStr = commonCacheUtil.getCacheValue(Constants.PRODUCT_TOKEN_PREFIX+productId);
         if (redisProductStr == null){
             Product product = productMapper.selectByPrimaryKey(productId);
             if(product == null){
@@ -225,11 +231,11 @@ public class ProductServiceImpl implements IProductService{
             if(product.getStatus() != Constants.Product.PRODUCT_ON){
                 return ServerResponse.createByErrorMessage("商品已经下架或者删除");
             }
-            commonCacheUtil.cacheNxExpire(Constants.PRODUCT_STOCK_TOKEN_PREFIX+productId,JsonUtil.obj2String(product),Constants.PRODUCT_STOCK_EXPIRE_TIME);
+            commonCacheUtil.cacheNxExpire(Constants.PRODUCT_TOKEN_PREFIX+productId,JsonUtil.obj2String(product),Constants.PRODUCT_EXPIRE_TIME);
         }
 
         //2.获取商品
-        Product product = JsonUtil.Str2Obj(commonCacheUtil.getCacheValue(Constants.PRODUCT_STOCK_TOKEN_PREFIX+productId),Product.class);
+        Product product = JsonUtil.Str2Obj(commonCacheUtil.getCacheValue(Constants.PRODUCT_TOKEN_PREFIX+productId),Product.class);
         return ServerResponse.createBySuccess(product);
     }
 

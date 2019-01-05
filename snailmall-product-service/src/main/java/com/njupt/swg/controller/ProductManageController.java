@@ -3,6 +3,7 @@ package com.njupt.swg.controller;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import com.njupt.swg.cache.CommonCacheUtil;
+import com.njupt.swg.common.constants.Constants;
 import com.njupt.swg.common.exception.SnailmallException;
 import com.njupt.swg.common.resp.ServerResponse;
 import com.njupt.swg.common.utils.CookieUtil;

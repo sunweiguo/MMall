@@ -8,22 +8,31 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Cart {
+@AllArgsConstructor
+public class Shipping {
     private Integer id;
 
     private Integer userId;
 
-    private Integer productId;
+    private String receiverName;
 
-    private Integer quantity;
+    private String receiverPhone;
 
-    private Integer checked;
+    private String receiverMobile;
+
+    private String receiverProvince;
+
+    private String receiverCity;
+
+    private String receiverDistrict;
+
+    private String receiverAddress;
+
+    private String receiverZip;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private Date createTime;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private Date updateTime;
 }
