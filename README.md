@@ -1,12 +1,6 @@
-# 2018年的最后一天，我为自己筹划一件大事
-
-> 前方图片高能，加载不出来需要多次刷新等待
+# 2018年的最后一天，对商城项目的架构做个改造
 
 ![image](http://bloghello.oursnail.cn/wallpaper.jpg)
-
-## 前言
-
-
 
 一直以来都是学习慕课的实战视频，虽然也跟着做出了一些东西，但是思路都是别人提供好的，脱离了老师，我一直在问自己一个问题：**能不能独立地按照自己的思路做出一些东西来？**
 
@@ -20,42 +14,30 @@
 
 第一期项目实现了比较简单的电商业务，整合SSM，并且部署到云端。
 
-第二期实现了tomcat集群，配合redis实现分布式session，还有一些定时任务、redis分布式锁、maven环境隔离的一些东西。
+第二期实现了tomcat集群，配合redis实现分布式session，还有一些定时任务、redis分布式锁、maven环境隔离的一些东西，还涉及很多spring和springmvc的有用的机巧。
 
 整体感觉是：一期实现业务，二期对于一期的提高不是太大，跟分布式无太大关系，仅仅实现了单点登陆和分布式session存储而已。
 
 个人感觉下一期的课程应该是springCloud的分布式改造，进行服务拆分和治理。所以，在整合这两个课程的基础上用springCloud进行微服务治理。
 
+## 项目详细描述
 
-对于微服务的学习，我主要是学习了慕课网这门课程：
+由tomcat集群和redis集群提升性能开始：
 
+![image](http://bloghello.oursnail.cn/snailmall-1.png)
 
-![https://coding.imooc.com/class/177.html](http://bloghello.oursnail.cn/scfs1-3.png)
+对于上面的架构来说，只是做了一些集群进行优化，随着业务的发展，用户越来越多，用户服务等其他服务必然要拆分出来独立成为一个服务，这样做的好处是，一方面一个团队负责一个服务可以提高开发效率，另外，对于扩展性也是非常有利的，但是也是有缺点的，会带来很多的复杂性，尤其是引入了分布式事务，所以不能为了分布式而分布式，而是针对不同的业务场景而采用合适的架构。
 
-这个课程业务极其简单，就是一个天气预报功能，作者的目的就是忽略业务干扰，急速入门微服务。整理的笔记：[swgBook-github](https://github.com/sunweiguo/swgBook/tree/master/spring-cloud-weather-action)
+微服务的实现，主要有两种，国内是阿里系的以dubbo+zookeeper为核心的一套服务治理和发现生态。另一个则是大名鼎鼎的spring cloud栈。
 
+spring cloud并不是像spring一个框架，他是解决微服务的一种方案，是由各种优秀开源组件共同配合而实现的微服务治理架构。下面的图是我构思的项目结构图：
 
-在码码在线这个平台，学习了SpringCloud微服务组件，加深了对微服务组件的理解。
-![www.coder520.com](http://bloghello.oursnail.cn/scfs1-4.png)
+待补充
 
-由于引入微服务必然是为了应对高并发场景，所以在码码在线这个平台上学习了分布式电商实战码码购：[mama-buy笔记](https://github.com/sunweiguo/mama-buy)
+- 项目的接口文档详见wiki：https://github.com/sunweiguo/spring-cloud-for-snailmall/wiki
+- 项目的数据库表设计：snailmall.sql
+- 
 
-这个实战比较有深度，现在还在消化中，所以，对于电商实战的改造，我将借鉴这个实战里面的一些思想。
-
-鉴于高并发场景，秒杀就是终极体现，所以在慕课网上学习了：
-
-![image](http://bloghello.oursnail.cn/scfs1-5.png)
-
-服务端的优化主要是通过redis的内存标记+预减库存+MQ异步下单实现。
-
-
-在最后，我花一天时间简单过了一遍廖师兄改造微信点餐项目的实现思路，最后他使用`docker`+`rancher`这两个工具实现容器化和对容器的管理。没有具体去做：
-
-![image](http://bloghello.oursnail.cn/scfs1-6.png)
-
-经历了这一年的洗礼，当然不仅仅以上内容的学习，中间跨过了秋招，个人也成长了许多。嗯，就是这样...
-
-在有了以上的基础之后，我觉得我可以自己尝试去对电商项目改造一番了。虽然这个文章也没人看，但是我期待一下自己的表现吧！如果完成了，就将改造的过程整理一下。加油！
 
 ## 项目进展
 
@@ -76,20 +58,6 @@
 - [ ] 2019/1/7 订单管理模块
 - [ ] 2019/1/9 服务追踪、自动化部署
 - [ ] 2019/1/10 docker+k8s容器化
-
-## 项目详细描述
-
-由tomcat集群和redis集群提升性能开始：
-
-![image](http://bloghello.oursnail.cn/snailmall-1.png)
-
-本项目的架构为：
-
-待补充
-
-- 项目的接口文档详见wiki：https://github.com/sunweiguo/spring-cloud-for-snailmall/wiki
-- 项目的数据库表设计：snailmall.sql
-- 
 
 ## 项目启动
 
