@@ -12,7 +12,7 @@ spring:
         git:
           uri: https://github.com/sunweiguo/config-center-for-snailmall
           username: sunweiguo
-          password: xxxx
+          password: xxxxxxxxx
           search-paths: user-service-config,category-service-config,product-service-config,order-service-config,address-service-config,shipping-service-config,cart-service-config
     bus:
       trace:

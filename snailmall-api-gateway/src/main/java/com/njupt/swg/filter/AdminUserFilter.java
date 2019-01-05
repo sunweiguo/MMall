@@ -8,6 +8,7 @@ import com.njupt.swg.common.Parameters;
 import com.njupt.swg.constants.Constants;
 import com.njupt.swg.entity.User;
 import com.njupt.swg.exception.SnailmallException;
+import com.njupt.swg.resp.ResponseEnum;
 import com.njupt.swg.utils.CookieUtil;
 import com.njupt.swg.utils.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -73,7 +74,7 @@ public class AdminUserFilter extends ZuulFilter {
         //2.从redis中获取用户信息
         String userStr = commonCacheUtil.getCacheValue(loginToken);
         if(userStr == null){
-            throw new SnailmallException("用户未登录,无法获取当前用户信息");
+            throw new SnailmallException(ResponseEnum.NEED_LOGIN.getCode(),"用户未登录,无法获取当前用户信息");
         }
         String url = request.getRequestURI();
         if(url.contains("manage")){

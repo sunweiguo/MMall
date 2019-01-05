@@ -2,7 +2,9 @@ package com.njupt.swg.common.resp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -18,6 +20,8 @@ public class ServerResponse<T> implements Serializable {
     private int status;
     private String msg;
     private T data;
+
+    public ServerResponse(){}
 
     private ServerResponse(int status){
         this.status = status;

@@ -26,4 +26,15 @@ public class Constants {
         String LIMIT_NUM_SUCCESS = "LIMIT_NUM_SUCCESS";
     }
 
+    /** 产品的状态 **/
+    public interface Product{
+        int PRODUCT_ON = 1;
+        int PRODUCT_OFF = 2;
+        int PRODUCT_DELETED = 3;
+    }
+
+    /***redis product stock**/
+    public static final String PRODUCT_STOCK_TOKEN_PREFIX = "product_stock_";
+
+
 }

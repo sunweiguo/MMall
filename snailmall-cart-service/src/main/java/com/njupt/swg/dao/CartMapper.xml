@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.njupt.swg.dao.CartMapper" >
-  <resultMap id="BaseResultMap" type="com.njupt.swg.entity.Order" >
+  <resultMap id="BaseResultMap" type="com.njupt.swg.entity.Cart" >
     <constructor >
       <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
@@ -25,7 +25,7 @@
     delete from mmall_cart
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.njupt.swg.entity.Order" >
+  <insert id="insert" parameterType="com.njupt.swg.entity.Cart" >
     insert into mmall_cart (id, user_id, product_id, 
       quantity, checked, create_time, 
       update_time)
@@ -33,7 +33,7 @@
       #{quantity,jdbcType=INTEGER}, #{checked,jdbcType=INTEGER}, now(),
       now())
   </insert>
-  <insert id="insertSelective" parameterType="com.njupt.swg.entity.Order" >
+  <insert id="insertSelective" parameterType="com.njupt.swg.entity.Cart" >
     insert into mmall_cart
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -82,7 +82,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.njupt.swg.entity.Order" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.njupt.swg.entity.Cart" >
     update mmall_cart
     <set >
       <if test="userId != null" >
@@ -106,7 +106,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.njupt.swg.entity.Order" >
+  <update id="updateByPrimaryKey" parameterType="com.njupt.swg.entity.Cart" >
     update mmall_cart
     set user_id = #{userId,jdbcType=INTEGER},
       product_id = #{productId,jdbcType=INTEGER},

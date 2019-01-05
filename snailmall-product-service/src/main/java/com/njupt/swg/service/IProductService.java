@@ -32,4 +32,7 @@ public interface IProductService {
 
     /** 前台门户获取商品分页列表 **/
     ServerResponse<PageInfo> portalList(String keyword, Integer categoryId, String orderBy, int pageNum, int pageSize);
+
+    /** 从redis中查询商品，没有则将商品放进redis中 **/
+    ServerResponse queryProduct(Integer productId);
 }

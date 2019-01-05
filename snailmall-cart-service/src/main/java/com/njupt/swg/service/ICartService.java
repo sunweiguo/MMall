@@ -23,7 +23,7 @@ public interface ICartService {
     ServerResponse list(Integer userId);
 
     /**  购物车选中/取消某个商品 **/
-    ServerResponse selectOrUnSelect(Integer userId, int checked, Object o);
+    ServerResponse selectOrUnSelect(Integer userId, int checked, Integer productId);
 
     /**  查询在购物车里的产品数量 **/
     ServerResponse<Integer> get_cart_product_count(Integer userId);

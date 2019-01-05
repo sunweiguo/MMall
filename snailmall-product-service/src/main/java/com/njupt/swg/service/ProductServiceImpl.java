@@ -3,6 +3,7 @@ package com.njupt.swg.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import com.njupt.swg.cache.CommonCacheUtil;
 import com.njupt.swg.clients.CategoryClient;
 import com.njupt.swg.common.constants.Constants;
 import com.njupt.swg.common.exception.SnailmallException;
@@ -36,6 +37,8 @@ public class ProductServiceImpl implements IProductService{
     private ProductMapper productMapper;
     @Autowired
     private CategoryClient categoryClient;
+    @Autowired
+    private CommonCacheUtil commonCacheUtil;
 
 
     @Override
@@ -205,6 +208,31 @@ public class ProductServiceImpl implements IProductService{
         pageInfo.setList(productListVoList);
         return ServerResponse.createBySuccess(pageInfo);
     }
+
+    @Override
+    public ServerResponse queryProduct(Integer productId) {
+        //1.校验参数
+        if(productId == null){
+            return ServerResponse.createByErrorMessage("参数错误");
+        }
+        //2.去redis中查询，没有则把商品重新添加进redis中
+        String redisProductStr = commonCacheUtil.getCacheValue(Constants.PRODUCT_STOCK_TOKEN_PREFIX+productId);
+        if (redisProductStr == null){
+            Product product = productMapper.selectByPrimaryKey(productId);
+            if(product == null){
+                return ServerResponse.createByErrorMessage("商品不存在");
+            }
+            if(product.getStatus() != Constants.Product.PRODUCT_ON){
+                return ServerResponse.createByErrorMessage("商品已经下架或者删除");
+            }
+            commonCacheUtil.cacheNxExpire(Constants.PRODUCT_STOCK_TOKEN_PREFIX+productId,JsonUtil.obj2String(product),Constants.PRODUCT_STOCK_EXPIRE_TIME);
+        }
+
+        //2.获取商品
+        Product product = JsonUtil.Str2Obj(commonCacheUtil.getCacheValue(Constants.PRODUCT_STOCK_TOKEN_PREFIX+productId),Product.class);
+        return ServerResponse.createBySuccess(product);
+    }
+
 
     private ProductListVo assembleProductListVo(Product product) {
         ProductListVo productListVo = new ProductListVo();

@@ -35,4 +35,9 @@ public class ProductController {
                                          @RequestParam(value = "orderBy",defaultValue = "")String orderBy){
         return productService.portalList(keyword,categoryId,orderBy,pageNum,pageSize);
     }
+
+    @RequestMapping("/queryProduct.do")
+    public ServerResponse queryProduct(@RequestParam("productId") Integer productId){
+        return productService.queryProduct(productId);
+    }
 }

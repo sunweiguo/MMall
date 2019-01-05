@@ -2,13 +2,9 @@ package com.njupt.swg.controller;
 
 import com.njupt.swg.cache.CommonCacheUtil;
 import com.njupt.swg.common.constants.Constants;
-import com.njupt.swg.common.resp.ResponseEnum;
 import com.njupt.swg.common.resp.ServerResponse;
-import com.njupt.swg.common.utils.CookieUtil;
-import com.njupt.swg.common.utils.JsonUtil;
 import com.njupt.swg.entity.User;
 import com.njupt.swg.service.ICartService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @RequestMapping("/cart")
-public class CartController {
+public class CartController extends BaseController{
     @Autowired
     private ICartService cartService;
     @Autowired
@@ -36,15 +32,7 @@ public class CartController {
      */
     @RequestMapping("add.do")
     public ServerResponse add(HttpServletRequest httpServletRequest, Integer productId, Integer count){
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登陆，无法获取当前用户信息");
-        }
-        String userJsonStr = commonCacheUtil.getCacheValue(loginToken);
-        User user = JsonUtil.Str2Obj(userJsonStr,User.class);
-        if(user == null){
-            return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
-        }
+        User user = getCurrentUser(httpServletRequest);
 
         return cartService.add(user.getId(),productId,count);
     }
@@ -56,15 +44,7 @@ public class CartController {
      */
     @RequestMapping("update.do")
     public ServerResponse update(HttpServletRequest httpServletRequest,Integer productId,Integer count){
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登陆，无法获取当前用户信息");
-        }
-        String userJsonStr = commonCacheUtil.getCacheValue(loginToken);
-        User user = JsonUtil.Str2Obj(userJsonStr,User.class);
-        if(user == null){
-            return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
-        }
+        User user = getCurrentUser(httpServletRequest);
 
         return cartService.update(user.getId(),productId,count);
     }
@@ -74,15 +54,7 @@ public class CartController {
      */
     @RequestMapping("delete_product.do")
     public ServerResponse delete_product(HttpServletRequest httpServletRequest,String productIds){
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登陆，无法获取当前用户信息");
-        }
-        String userJsonStr = commonCacheUtil.getCacheValue(loginToken);
-        User user = JsonUtil.Str2Obj(userJsonStr,User.class);
-        if(user == null){
-            return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
-        }
+        User user = getCurrentUser(httpServletRequest);
 
         return cartService.delete(user.getId(),productIds);
     }
@@ -93,15 +65,7 @@ public class CartController {
      */
     @RequestMapping("list.do")
     public ServerResponse list(HttpServletRequest httpServletRequest){
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登陆，无法获取当前用户信息");
-        }
-        String userJsonStr = commonCacheUtil.getCacheValue(loginToken);
-        User user = JsonUtil.Str2Obj(userJsonStr,User.class);
-        if(user == null){
-            return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
-        }
+        User user = getCurrentUser(httpServletRequest);
 
         return cartService.list(user.getId());
     }
@@ -112,15 +76,7 @@ public class CartController {
      */
     @RequestMapping("select_all.do")
     public ServerResponse select_all(HttpServletRequest httpServletRequest){
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登陆，无法获取当前用户信息");
-        }
-        String userJsonStr = commonCacheUtil.getCacheValue(loginToken);
-        User user = JsonUtil.Str2Obj(userJsonStr,User.class);
-        if(user == null){
-            return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
-        }
+        User user = getCurrentUser(httpServletRequest);
 
         return cartService.selectOrUnSelect(user.getId(), Constants.Cart.CHECKED,null);
     }
@@ -130,15 +86,7 @@ public class CartController {
      */
     @RequestMapping("un_select_all.do")
     public ServerResponse un_select_all(HttpServletRequest httpServletRequest){
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登陆，无法获取当前用户信息");
-        }
-        String userJsonStr = commonCacheUtil.getCacheValue(loginToken);
-        User user = JsonUtil.Str2Obj(userJsonStr,User.class);
-        if(user == null){
-            return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
-        }
+        User user = getCurrentUser(httpServletRequest);
 
         return cartService.selectOrUnSelect(user.getId(),Constants.Cart.UN_CHECKED,null);
     }
@@ -148,15 +96,7 @@ public class CartController {
      */
     @RequestMapping("select.do")
     public ServerResponse select(HttpServletRequest httpServletRequest,Integer productId){
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登陆，无法获取当前用户信息");
-        }
-        String userJsonStr = commonCacheUtil.getCacheValue(loginToken);
-        User user = JsonUtil.Str2Obj(userJsonStr,User.class);
-        if(user == null){
-            return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
-        }
+        User user = getCurrentUser(httpServletRequest);
 
         return cartService.selectOrUnSelect(user.getId(),Constants.Cart.CHECKED,productId);
     }
@@ -166,15 +106,7 @@ public class CartController {
      */
     @RequestMapping("un_select.do")
     public ServerResponse un_select(HttpServletRequest httpServletRequest,Integer productId){
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登陆，无法获取当前用户信息");
-        }
-        String userJsonStr = commonCacheUtil.getCacheValue(loginToken);
-        User user = JsonUtil.Str2Obj(userJsonStr,User.class);
-        if(user == null){
-            return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
-        }
+        User user = getCurrentUser(httpServletRequest);
 
         return cartService.selectOrUnSelect(user.getId(),Constants.Cart.UN_CHECKED,productId);
     }
@@ -185,15 +117,7 @@ public class CartController {
      */
     @RequestMapping("get_cart_product_count.do")
     public ServerResponse<Integer> get_cart_product_count(HttpServletRequest httpServletRequest){
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if(StringUtils.isEmpty(loginToken)){
-            return ServerResponse.createByErrorMessage("用户未登陆，无法获取当前用户信息");
-        }
-        String userJsonStr = commonCacheUtil.getCacheValue(loginToken);
-        User user = JsonUtil.Str2Obj(userJsonStr,User.class);
-        if(user == null){
-            return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
-        }
+        User user = getCurrentUser(httpServletRequest);
 
         return cartService.get_cart_product_count(user.getId());
     }
