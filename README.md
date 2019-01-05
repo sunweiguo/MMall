@@ -79,6 +79,14 @@
 
 ## 项目详细描述
 
+由tomcat集群和redis集群提升性能开始：
+
+![image](http://bloghello.oursnail.cn/snailmall-1.png)
+
+本项目的架构为：
+
+待补充
+
 - 项目的接口文档详见wiki：https://github.com/sunweiguo/spring-cloud-for-snailmall/wiki
 - 项目的数据库表设计：snailmall.sql
 - 
