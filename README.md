@@ -22,7 +22,7 @@
 
 ## 项目详细描述
 
-从比较简单的架构开始，开源用搭建集群的方式来提升性能，比如用tomcat集群和redis集群提升性能：
+从比较简单的架构开始，可以用搭建集群的方式来提升性能，比如用tomcat集群和redis集群提升性能：
 
 ![image](http://bloghello.oursnail.cn/snailmall-1.png)
 
