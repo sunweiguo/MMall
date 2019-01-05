@@ -26,7 +26,7 @@ public class BaseController {
 
     User getCurrentUser(HttpServletRequest httpServletRequest){
         String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if(StringUtils.isEmpty(loginToken)){
+        if(StringUtils.isBlank(loginToken)){
             throw new SnailmallException("用户未登陆，无法获取当前用户信息");
         }
         String userJsonStr = commonCacheUtil.getCacheValue(loginToken);

@@ -3,6 +3,7 @@ package com.njupt.swg.clients;
 import com.njupt.swg.common.resp.ServerResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -13,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @FeignClient("category-service")
 public interface CategoryClient {
-    @GetMapping("/manage/category/get_category_detail.do")
+    @RequestMapping("/manage/category/get_category_detail.do")
     ServerResponse getCategoryDetail(@RequestParam("categoryId") Integer categoryId);
 
-    @GetMapping("/manage/category/get_deep_category.do")
+    @RequestMapping("/manage/category/get_deep_category.do")
     ServerResponse getDeepCategory(Integer categoryId);
 }

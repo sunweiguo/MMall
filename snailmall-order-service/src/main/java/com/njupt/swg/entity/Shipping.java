@@ -5,36 +5,31 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+@AllArgsConstructor
+public class Shipping {
     private Integer id;
-
-    private Long orderNo;
 
     private Integer userId;
 
-    private Integer shippingId;
+    private String receiverName;
 
-    private BigDecimal payment;
+    private String receiverPhone;
 
-    private Integer paymentType;
+    private String receiverMobile;
 
-    private Integer postage;
+    private String receiverProvince;
 
-    private Integer status;
+    private String receiverCity;
 
-    private Date paymentTime;
+    private String receiverDistrict;
 
-    private Date sendTime;
+    private String receiverAddress;
 
-    private Date endTime;
-
-    private Date closeTime;
+    private String receiverZip;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private Date createTime;

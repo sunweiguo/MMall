@@ -1,10 +1,16 @@
 package com.njupt.swg.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.njupt.swg.cache.CommonCacheUtil;
+import com.njupt.swg.common.exception.SnailmallException;
+import com.njupt.swg.common.resp.ResponseEnum;
 import com.njupt.swg.common.resp.ServerResponse;
+import com.njupt.swg.common.utils.CookieUtil;
+import com.njupt.swg.common.utils.JsonUtil;
 import com.njupt.swg.entity.Shipping;
 import com.njupt.swg.entity.User;
 import com.njupt.swg.service.IShippingService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +30,8 @@ public class ShippingController extends BaseController{
 
     @Autowired
     private IShippingService shippingService;
+    @Autowired
+    private CommonCacheUtil commonCacheUtil;
 
     /**
      * 添加地址
@@ -70,6 +78,24 @@ public class ShippingController extends BaseController{
                                          @RequestParam(value = "pageSize",defaultValue = "10")int pageSize){
         User user = getCurrentUser(httpServletRequest);
         return shippingService.list(user.getId(),pageNum,pageSize);
+    }
+
+    /**
+     * 根据id获取地址
+     */
+    @RequestMapping("getShipping.do")
+    Shipping getShipping(HttpServletRequest httpServletRequest,Integer shippingId){
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if(StringUtils.isBlank(loginToken)){
+            throw new SnailmallException("用户未登陆，无法获取当前用户信息");
+        }
+        String userJsonStr = commonCacheUtil.getCacheValue(loginToken);
+        if(userJsonStr == null){
+            throw new SnailmallException(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.Str2Obj(userJsonStr,User.class);
+
+        return shippingService.getShippingById(user.getId(),shippingId);
     }
 
 

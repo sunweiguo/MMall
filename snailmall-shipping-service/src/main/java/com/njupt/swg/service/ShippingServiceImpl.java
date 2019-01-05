@@ -3,6 +3,7 @@ package com.njupt.swg.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
+import com.njupt.swg.common.exception.SnailmallException;
 import com.njupt.swg.common.resp.ServerResponse;
 import com.njupt.swg.dao.ShippingMapper;
 import com.njupt.swg.entity.Shipping;
@@ -78,5 +79,17 @@ public class ShippingServiceImpl implements IShippingService{
         List<Shipping> shippingList = shippingMapper.selectByUserId(userId);
         PageInfo pageInfo = new PageInfo(shippingList);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public Shipping getShippingById(Integer userId,Integer shippingId) {
+        if(shippingId == null){
+           throw new SnailmallException("参数不正确");
+        }
+        Shipping shipping = shippingMapper.selectByUserIdShippingId(userId,shippingId);
+        if(shipping == null){
+            throw new SnailmallException("无法查询到该地址");
+        }
+        return shipping;
     }
 }

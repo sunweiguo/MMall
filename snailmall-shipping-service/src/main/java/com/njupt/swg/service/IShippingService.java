@@ -20,4 +20,6 @@ public interface IShippingService {
     ServerResponse select(Integer userId, Integer shippingId);
 
     ServerResponse<PageInfo> list(Integer userId, int pageNum, int pageSize);
+
+    Shipping getShippingById(Integer userId,Integer shippingId);
 }
