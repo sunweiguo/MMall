@@ -40,4 +40,23 @@ public class ProductController {
     public ServerResponse queryProduct(@RequestParam("productId") Integer productId){
         return productService.queryProduct(productId);
     }
+
+    /**
+     * 补充接口1：预置每个商品库存到redis中
+     */
+    @RequestMapping("/preInitProductStcokToRedis")
+    public ServerResponse preInitProductStcokToRedis(){
+        return productService.preInitProductStcokToRedis();
+    }
+
+
+    /**
+     * 补充接口2：预置所有商品到redis中
+     */
+    @RequestMapping("/preInitProductListToRedis")
+    public ServerResponse preInitProductListToRedis(){
+        return productService.preInitProductListToRedis();
+    }
+
+
 }

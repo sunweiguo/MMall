@@ -205,6 +205,13 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public ServerResponse createOrder(Integer userId, Integer shippingId) {
+        //1. lua脚本来判断redis中库存还有没有，并且减库存---redis预减库存
+
+
+        //2. 对这个userId加上一个分布式锁，防止这个用户重复下单
+
+
+        //3. 用户进行下单,参数userId,ShippingId传给MQ取异步下单
 
         return null;
     }

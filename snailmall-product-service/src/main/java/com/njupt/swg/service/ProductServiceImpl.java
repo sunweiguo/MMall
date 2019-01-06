@@ -280,4 +280,31 @@ public class ProductServiceImpl implements IProductService{
     }
 
 
+
+    @Override
+    public ServerResponse preInitProductStcokToRedis() {
+        List<Product> productList = productMapper.selectList();
+        for(Product product:productList){
+            Integer productId = product.getId();
+            Integer stock = product.getStock();
+            if(productId != null && stock != null && product.getStatus().equals(Constants.Product.PRODUCT_ON)){
+                commonCacheUtil.cacheNxExpire(Constants.PRODUCT_TOKEN_STOCK_PREFIX+String.valueOf(productId),String.valueOf(stock),Constants.PRODUCT_EXPIRE_TIME);
+            }
+        }
+        return ServerResponse.createBySuccessMessage("预置库存成功");
+    }
+
+    @Override
+    public ServerResponse preInitProductListToRedis() {
+        List<Product> productList = productMapper.selectList();
+        for(Product product:productList){
+            Integer productId = product.getId();
+            if(productId != null  && product.getStatus().equals(Constants.Product.PRODUCT_ON)){
+                commonCacheUtil.cacheNxExpire(Constants.PRODUCT_TOKEN_PREFIX+String.valueOf(productId),JsonUtil.obj2String(product),Constants.PRODUCT_EXPIRE_TIME);
+            }
+        }
+        return ServerResponse.createBySuccessMessage("预置商品信息成功");
+    }
+
+
 }
