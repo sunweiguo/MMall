@@ -49,10 +49,17 @@ public class CartServiceImpl implements ICartService{
             return ServerResponse.createByErrorMessage("参数不正确");
         }
         //2.校验商品
-        ServerResponse response = productClient.queryProduct(productId);
-        Object object = response.getData();
-        String objStr = JsonUtil.obj2String(object);
-        Product product = JsonUtil.Str2Obj(objStr,Product.class);
+        String productStr = commonCacheUtil.getCacheValue(Constants.PRODUCT_STOCK_TOKEN_PREFIX+productId);
+        Product product = null;
+        if(productStr == null){
+            ServerResponse response = productClient.queryProduct(productId);
+            Object object = response.getData();
+            String objStr = JsonUtil.obj2String(object);
+            product = (Product) JsonUtil.Str2Obj(objStr,Product.class);
+        }else {
+            product = (Product) JsonUtil.Str2Obj(productStr,Product.class);
+        }
+
         if(product == null){
             return ServerResponse.createByErrorMessage("商品不存在");
         }

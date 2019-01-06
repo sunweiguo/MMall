@@ -7,14 +7,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @Author swg.
- * @Date 2019/1/5 22:01
+ * @Date 2019/1/6 20:16
  * @CONTACT 317758022@qq.com
  * @DESC
  */
-@FeignClient("shipping-service")
-public interface ShippingClient {
-
-    @RequestMapping("/shipping/getShipping.do")
-    ServerResponse getShipping(@RequestParam("shippingId") Integer shippingId);
-
+@FeignClient("product-service")
+public interface ProductClient {
+    @RequestMapping("/product/queryProduct.do")
+    ServerResponse queryProduct(@RequestParam("productId") Integer productId);
 }

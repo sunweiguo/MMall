@@ -2,14 +2,18 @@ package com.njupt.swg.controller;
 
 import com.njupt.swg.cache.CommonCacheUtil;
 import com.njupt.swg.common.constants.Constants;
+import com.njupt.swg.common.resp.ResponseEnum;
 import com.njupt.swg.common.resp.ServerResponse;
+import com.njupt.swg.common.utils.JsonUtil;
 import com.njupt.swg.entity.User;
 import com.njupt.swg.service.ICartService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 /**
  * @Author swg.
@@ -120,5 +124,32 @@ public class CartController extends BaseController{
         User user = getCurrentUser(httpServletRequest);
 
         return cartService.get_cart_product_count(user.getId());
+    }
+
+
+    /**
+     * 提供的feign接口，根据userId获取购物车列表
+     */
+    @RequestMapping("getCartList.do")
+    public ServerResponse getCartList(HttpServletRequest httpServletRequest){
+        User user = null;
+        Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
+        if (headerNames != null) {
+            while (headerNames.hasMoreElements()) {
+                String name = headerNames.nextElement();
+                if(name.equalsIgnoreCase("snailmall_login_token")){
+                    String value = httpServletRequest.getHeader(name);
+                    if(StringUtils.isBlank(value)){
+                        return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),"用户未登陆，无法获取当前用户信息");
+                    }
+                    String userJsonStr = commonCacheUtil.getCacheValue(value);
+                    if(userJsonStr == null){
+                        return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),"用户未登陆，无法获取当前用户信息");
+                    }
+                    user = JsonUtil.Str2Obj(userJsonStr,User.class);
+                }
+            }
+        }
+        return cartService.list(user.getId());
     }
 }

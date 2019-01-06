@@ -18,6 +18,14 @@ public class Constants {
 
     /**自定义状态码 end**/
 
+    /** 产品的状态 **/
+    public interface Product{
+        int PRODUCT_ON = 1;
+        int PRODUCT_OFF = 2;
+        int PRODUCT_DELETED = 3;
+    }
+
+
     public enum OrderStatusEnum{
         CANCELED(0,"已取消"),
         NO_PAY(10,"未支付"),
@@ -79,6 +87,10 @@ public class Constants {
             throw new RuntimeException("么有找到对应的枚举");
         }
     }
+
+
+    /***redis product stock**/
+    public static final String PRODUCT_STOCK_TOKEN_PREFIX = "product_";
 
 
 }

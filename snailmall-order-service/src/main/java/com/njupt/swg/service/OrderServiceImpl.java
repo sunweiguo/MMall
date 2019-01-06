@@ -3,28 +3,33 @@ package com.njupt.swg.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import com.njupt.swg.cache.CommonCacheUtil;
+import com.njupt.swg.clients.CartClient;
+import com.njupt.swg.clients.ProductClient;
 import com.njupt.swg.clients.ShippingClient;
 import com.njupt.swg.common.constants.Constants;
 import com.njupt.swg.common.exception.SnailmallException;
 import com.njupt.swg.common.resp.ResponseEnum;
 import com.njupt.swg.common.resp.ServerResponse;
+import com.njupt.swg.common.utils.BigDecimalUtil;
 import com.njupt.swg.common.utils.DateTimeUtil;
 import com.njupt.swg.common.utils.JsonUtil;
 import com.njupt.swg.common.utils.PropertiesUtil;
 import com.njupt.swg.dao.OrderItemMapper;
 import com.njupt.swg.dao.OrderMapper;
-import com.njupt.swg.entity.Order;
-import com.njupt.swg.entity.OrderItem;
-import com.njupt.swg.entity.Shipping;
+import com.njupt.swg.entity.*;
 import com.njupt.swg.vo.OrderItemVo;
 import com.njupt.swg.vo.OrderVo;
 import com.njupt.swg.vo.ShippingVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @Author swg.
@@ -41,6 +46,12 @@ public class OrderServiceImpl implements IOrderService {
     private OrderItemMapper orderItemMapper;
     @Autowired
     private ShippingClient shippingClient;
+    @Autowired
+    private CartClient cartClient;
+    @Autowired
+    private ProductClient productClient;
+    @Autowired
+    private CommonCacheUtil commonCacheUtil;
 
     /***后台订单管理 start***/
 
@@ -190,8 +201,33 @@ public class OrderServiceImpl implements IOrderService {
         return orderVoList;
     }
 
-    /***后台订单管理 end***/
+    /***门户订单管理 start***/
 
+    @Override
+    public ServerResponse createOrder(Integer userId, Integer shippingId) {
+
+        return null;
+    }
+
+    @Override
+    public ServerResponse cancel(Integer userId, Long orderNo) {
+        return null;
+    }
+
+    @Override
+    public ServerResponse getOrderCartProduct(Integer userId) {
+        return null;
+    }
+
+    @Override
+    public ServerResponse getOrderDetail(Integer userId, Long orderNo) {
+        return null;
+    }
+
+    @Override
+    public ServerResponse getOrderList(Integer userId, int pageNum, int pageSize) {
+        return null;
+    }
 
 
 }
