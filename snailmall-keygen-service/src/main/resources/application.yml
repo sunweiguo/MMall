@@ -1,0 +1,11 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://111.231.119.253:8761/eureka
+spring:
+  application:
+    name: keyGen-service
+server:
+  port: 8087
+zk:
+  host: 111.231.119.253
