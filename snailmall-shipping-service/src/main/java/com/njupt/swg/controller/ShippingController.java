@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 /**
  * @Author swg.
@@ -84,18 +85,28 @@ public class ShippingController extends BaseController{
      * 根据id获取地址
      */
     @RequestMapping("getShipping.do")
-    Shipping getShipping(HttpServletRequest httpServletRequest,Integer shippingId){
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if(StringUtils.isBlank(loginToken)){
-            throw new SnailmallException("用户未登陆，无法获取当前用户信息");
+    ServerResponse getShipping(HttpServletRequest httpServletRequest,Integer shippingId){
+        User user = null;
+        Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
+        if (headerNames != null) {
+            while (headerNames.hasMoreElements()) {
+                String name = headerNames.nextElement();
+                if(name.equalsIgnoreCase("snailmall_login_token")){
+                    String value = httpServletRequest.getHeader(name);
+                    if(StringUtils.isBlank(value)){
+                        return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),"用户未登陆，无法获取当前用户信息");
+                    }
+                    String userJsonStr = commonCacheUtil.getCacheValue(value);
+                    if(userJsonStr == null){
+                        return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),"用户未登陆，无法获取当前用户信息");
+                    }
+                    user = JsonUtil.Str2Obj(userJsonStr,User.class);
+                }
+            }
         }
-        String userJsonStr = commonCacheUtil.getCacheValue(loginToken);
-        if(userJsonStr == null){
-            throw new SnailmallException(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
-        }
-        User user = JsonUtil.Str2Obj(userJsonStr,User.class);
 
         return shippingService.getShippingById(user.getId(),shippingId);
+
     }
 
 

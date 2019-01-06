@@ -41,7 +41,6 @@ public class OrderManageController {
     }
 
 
-
     @RequestMapping("send_goods.do")
     public ServerResponse<String> orderSendGoods(Long orderNo){
         return orderService.manageSendGoods(orderNo);

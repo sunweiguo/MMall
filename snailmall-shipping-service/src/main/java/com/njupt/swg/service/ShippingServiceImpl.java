@@ -82,14 +82,14 @@ public class ShippingServiceImpl implements IShippingService{
     }
 
     @Override
-    public Shipping getShippingById(Integer userId,Integer shippingId) {
+    public ServerResponse getShippingById(Integer userId,Integer shippingId) {
         if(shippingId == null){
-           throw new SnailmallException("参数不正确");
+           return ServerResponse.createByErrorMessage("参数不正确");
         }
         Shipping shipping = shippingMapper.selectByUserIdShippingId(userId,shippingId);
         if(shipping == null){
-            throw new SnailmallException("无法查询到该地址");
+            return ServerResponse.createByErrorMessage("无法查询到该地址");
         }
-        return shipping;
+        return ServerResponse.createBySuccess("获取地址成功",shipping);
     }
 }

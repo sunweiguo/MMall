@@ -4,6 +4,7 @@ import com.njupt.swg.common.resp.ServerResponse;
 import com.njupt.swg.entity.Shipping;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @Author swg.
@@ -15,6 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface ShippingClient {
 
     @RequestMapping("/shipping/getShipping.do")
-    Shipping getShipping(Integer shippingId);
+    ServerResponse getShipping(@RequestParam("shippingId") Integer shippingId);
 
 }

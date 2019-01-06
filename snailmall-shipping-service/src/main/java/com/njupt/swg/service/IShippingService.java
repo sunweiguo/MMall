@@ -21,5 +21,5 @@ public interface IShippingService {
 
     ServerResponse<PageInfo> list(Integer userId, int pageNum, int pageSize);
 
-    Shipping getShippingById(Integer userId,Integer shippingId);
+    ServerResponse getShippingById(Integer userId,Integer shippingId);
 }

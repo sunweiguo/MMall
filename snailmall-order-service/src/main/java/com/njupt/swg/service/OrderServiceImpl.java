@@ -108,7 +108,18 @@ public class OrderServiceImpl implements IOrderService {
 
         orderVo.setShippingId(order.getShippingId());
 
-        Shipping shipping = shippingClient.getShipping(order.getShippingId());
+        Shipping shipping = null;
+        ServerResponse response = shippingClient.getShipping(order.getShippingId());
+        if(response.getStatus() == ResponseEnum.NEED_LOGIN.getCode()){
+            throw new SnailmallException("用户需要重新登陆");
+        }
+        if(!response.isSuccess()){
+            throw new SnailmallException("获取地址出现错误!");
+        }else {
+            Object object = response.getData();
+            String objStr = JsonUtil.obj2String(object);
+            shipping = JsonUtil.Str2Obj(objStr,Shipping.class);
+        }
 
         if(shipping != null){
             orderVo.setReceiverName(shipping.getReceiverName());
@@ -160,7 +171,7 @@ public class OrderServiceImpl implements IOrderService {
         shippingVo.setReceiverDistrict(shipping.getReceiverDistrict());
         shippingVo.setReceiverMobile(shipping.getReceiverMobile());
         shippingVo.setReceiverZip(shipping.getReceiverZip());
-        shippingVo.setReceiverPhone(shippingVo.getReceiverPhone());
+        shippingVo.setReceiverPhone(shipping.getReceiverPhone());
         return shippingVo;
     }
 
