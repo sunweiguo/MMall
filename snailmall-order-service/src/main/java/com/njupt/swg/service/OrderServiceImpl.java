@@ -246,8 +246,8 @@ public class OrderServiceImpl implements IOrderService {
                 messageVo.setCartVo(cartVo);
                 messageVo.setUserId(userId);
                 messageVo.setShippingId(shippingId);
-                messageVoList.add(messageVo);
                 messageVo.setOrderNo(orderNo);
+                messageVoList.add(messageVo);
             }
         }
 
