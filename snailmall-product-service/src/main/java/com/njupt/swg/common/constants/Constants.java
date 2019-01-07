@@ -36,7 +36,7 @@ public class Constants {
 
     /***redis product**/
     public static final String PRODUCT_TOKEN_PREFIX = "product__";
-    public static final int PRODUCT_EXPIRE_TIME = 60 * 60;
+    public static final int PRODUCT_EXPIRE_TIME = 60 * 60 * 24;
 
     public static final String PRODUCT_TOKEN_STOCK_PREFIX = "product__stock_";
 

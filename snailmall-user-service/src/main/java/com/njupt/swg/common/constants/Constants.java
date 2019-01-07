@@ -25,7 +25,7 @@ public class Constants {
      * 用户登陆redis的过期时间
      */
     public interface RedisCacheExtime{
-        int REDIS_SESSION_EXTIME = 60* 30;//30分钟
+        int REDIS_SESSION_EXTIME = 60 * 60 * 10;//30分钟
     }
 
     /** 用户注册判断重复的参数类型 start **/

@@ -2,8 +2,10 @@ package com.njupt.swg.service;
 
 import com.github.pagehelper.PageInfo;
 import com.njupt.swg.common.resp.ServerResponse;
-import com.njupt.swg.entity.Order;
+import com.njupt.swg.vo.MessageVo;
 import com.njupt.swg.vo.OrderVo;
+
+import java.util.List;
 
 /**
  * @Author swg.
@@ -42,4 +44,6 @@ public interface IOrderService {
     ServerResponse getOrderList(Integer userId, int pageNum, int pageSize);
 
 
+    /**扣减库存、下订单**/
+    ServerResponse stockAndOrderprocess(List<MessageVo> result);
 }

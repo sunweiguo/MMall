@@ -90,7 +90,8 @@ public class Constants {
 
 
     /***redis product stock**/
-    public static final String PRODUCT_STOCK_TOKEN_PREFIX = "product_";
+    public static final String PRODUCT_TOKEN_PREFIX = "product__";
 
+    public static final String PRODUCT_TOKEN_STOCK_PREFIX = "product__stock_";
 
 }

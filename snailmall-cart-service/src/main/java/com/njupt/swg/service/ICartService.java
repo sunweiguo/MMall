@@ -27,4 +27,7 @@ public interface ICartService {
 
     /**  查询在购物车里的产品数量 **/
     ServerResponse<Integer> get_cart_product_count(Integer userId);
+
+    /** 清空购物车 **/
+    ServerResponse removeCart(Integer userId);
 }

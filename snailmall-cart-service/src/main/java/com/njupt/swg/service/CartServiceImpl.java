@@ -49,7 +49,7 @@ public class CartServiceImpl implements ICartService{
             return ServerResponse.createByErrorMessage("参数不正确");
         }
         //2.校验商品
-        String productStr = commonCacheUtil.getCacheValue(Constants.PRODUCT_STOCK_TOKEN_PREFIX+productId);
+        String productStr = commonCacheUtil.getCacheValue(Constants.PRODUCT_TOKEN_PREFIX+productId);
         Product product = null;
         if(productStr == null){
             ServerResponse response = productClient.queryProduct(productId);
@@ -144,6 +144,15 @@ public class CartServiceImpl implements ICartService{
         return ServerResponse.createBySuccess(cartMapper.selectCartProductCount(userId));
     }
 
+    @Override
+    public ServerResponse removeCart(Integer userId) {
+        List<Cart> cartList = cartMapper.selectCartByUserId(userId);
+        for(Cart cart:cartList){
+            cartMapper.deleteByPrimaryKey(cart.getId());
+        }
+        return ServerResponse.createBySuccessMessage("清除购物车成功");
+    }
+
     /**
      * 比较通用的构建购物车的方法
      * @param userId
@@ -162,7 +171,7 @@ public class CartServiceImpl implements ICartService{
                 cartProductVo.setUserId(cart.getUserId());
                 cartProductVo.setProductId(cart.getProductId());
                 //2.从redis中获取商品，获取不到则feign获取并且重置进redis中
-                String productStr = commonCacheUtil.getCacheValue(Constants.PRODUCT_STOCK_TOKEN_PREFIX+cart.getProductId());
+                String productStr = commonCacheUtil.getCacheValue(Constants.PRODUCT_TOKEN_PREFIX+cart.getProductId());
                 Product product = null;
                 if(productStr == null){
                     ServerResponse response = productClient.queryProduct(cart.getProductId());

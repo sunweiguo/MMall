@@ -2,10 +2,13 @@ eureka:
   client:
     service-url:
       defaultZone: http://111.231.119.253:8761/eureka
+  instance:
+    ip-address: 111.231.119.253
+    prefer-ip-address: true
 spring:
   application:
-    name: keyGen-service
+    name: keygen-service
 server:
   port: 8087
 zk:
-  host: 111.231.119.253
+  host: 127.0.0.1

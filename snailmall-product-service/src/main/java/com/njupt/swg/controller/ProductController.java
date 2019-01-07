@@ -44,7 +44,7 @@ public class ProductController {
     /**
      * 补充接口1：预置每个商品库存到redis中
      */
-    @RequestMapping("/preInitProductStcokToRedis")
+    @RequestMapping("/preInitProductStcokToRedis.do")
     public ServerResponse preInitProductStcokToRedis(){
         return productService.preInitProductStcokToRedis();
     }
@@ -53,7 +53,7 @@ public class ProductController {
     /**
      * 补充接口2：预置所有商品到redis中
      */
-    @RequestMapping("/preInitProductListToRedis")
+    @RequestMapping("/preInitProductListToRedis.do")
     public ServerResponse preInitProductListToRedis(){
         return productService.preInitProductListToRedis();
     }

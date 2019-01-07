@@ -150,6 +150,41 @@ public class CartController extends BaseController{
                 }
             }
         }
+        if (user == null){
+            return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),"用户未登陆，无法获取当前用户信息");
+        }
         return cartService.list(user.getId());
     }
+
+    /**
+     * 提供的feign接口，清空购物车
+     */
+    @RequestMapping("removeCart.do")
+    public ServerResponse removeCart(HttpServletRequest httpServletRequest){
+        User user = null;
+        Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
+        if (headerNames != null) {
+            while (headerNames.hasMoreElements()) {
+                String name = headerNames.nextElement();
+                if(name.equalsIgnoreCase("snailmall_login_token")){
+                    String value = httpServletRequest.getHeader(name);
+                    if(StringUtils.isBlank(value)){
+                        return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),"用户未登陆，无法获取当前用户信息");
+                    }
+                    String userJsonStr = commonCacheUtil.getCacheValue(value);
+                    if(userJsonStr == null){
+                        return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),"用户未登陆，无法获取当前用户信息");
+                    }
+                    user = JsonUtil.Str2Obj(userJsonStr,User.class);
+                }
+            }
+        }
+        if (user == null){
+            return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),"用户未登陆，无法获取当前用户信息");
+        }
+        return cartService.removeCart(user.getId());
+    }
+
+
+
 }

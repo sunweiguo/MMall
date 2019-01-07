@@ -5,31 +5,29 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.njupt.swg.cache.CommonCacheUtil;
 import com.njupt.swg.clients.CartClient;
+import com.njupt.swg.clients.KeyGenClient;
 import com.njupt.swg.clients.ProductClient;
 import com.njupt.swg.clients.ShippingClient;
 import com.njupt.swg.common.constants.Constants;
 import com.njupt.swg.common.exception.SnailmallException;
 import com.njupt.swg.common.resp.ResponseEnum;
 import com.njupt.swg.common.resp.ServerResponse;
-import com.njupt.swg.common.utils.BigDecimalUtil;
-import com.njupt.swg.common.utils.DateTimeUtil;
-import com.njupt.swg.common.utils.JsonUtil;
-import com.njupt.swg.common.utils.PropertiesUtil;
+import com.njupt.swg.common.utils.*;
 import com.njupt.swg.dao.OrderItemMapper;
 import com.njupt.swg.dao.OrderMapper;
 import com.njupt.swg.entity.*;
-import com.njupt.swg.vo.OrderItemVo;
-import com.njupt.swg.vo.OrderVo;
-import com.njupt.swg.vo.ShippingVo;
+import com.njupt.swg.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @Author swg.
@@ -51,9 +49,15 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private ProductClient productClient;
     @Autowired
+    private RedisUtils redisUtils;
+    @Autowired
+    private AmqpTemplate amqpTemplate;
+    @Autowired
     private CommonCacheUtil commonCacheUtil;
+    @Autowired
+    private KeyGenClient keyGenClient;
 
-    /***后台订单管理 start***/
+    /*** 后台订单管理 start***/
 
     @Override
     public ServerResponse<PageInfo> manageList(int pageNum, int pageSize) {
@@ -202,19 +206,85 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     /***门户订单管理 start***/
-
     @Override
     public ServerResponse createOrder(Integer userId, Integer shippingId) {
-        //1. lua脚本来判断redis中库存还有没有，并且减库存---redis预减库存
+        //1. TODO 对这个userId加上一个分布式锁，锁上一小段时间，防止这个用户在极短时间内重复点击下单
 
+        //2. lua脚本来判断redis中库存还有没有，并且减库存---redis预减库存
+        ServerResponse response = cartClient.getCartList();
+        if(response.getStatus() == ResponseEnum.NEED_LOGIN.getCode()){
+            return ServerResponse.createByErrorMessage("用户登陆信息有问题，请重新登陆");
+        }
 
-        //2. 对这个userId加上一个分布式锁，防止这个用户重复下单
+        Object object = response.getData();
+        String objStr = JsonUtil.obj2String(object);
+        log.info("【获取到的购物车信息为：{}】",objStr);
+        if(objStr == null){
+            return ServerResponse.createByErrorMessage("获取购物车失败");
+        }
+        CartVo cartVo = JsonUtil.Str2Obj(objStr,CartVo.class);
+        List<CartProductVo> cartProductVoList = cartVo.getCartProductVoList();
+        List<MessageVo> messageVoList = new ArrayList<>();
+        //这里生成订单号，方便查询
+        long orderNo = Long.parseLong(keyGenClient.generateKey());
+        for(CartProductVo cartProductVo:cartProductVoList){
+            MessageVo messageVo = new MessageVo();
+            Integer productId = cartProductVo.getProductId();
+            Integer quantity = cartProductVo.getQuantity();
+            long resultCode = (long) redisUtils.reduceStock(Constants.PRODUCT_TOKEN_STOCK_PREFIX+productId,String.valueOf(quantity));
+            log.info("【lua脚本返回的数为：{}】",resultCode);
+            if(resultCode == -2){
+//                map.put(productId,-2);
+                log.error("【商品{}库存不存在】",productId);
+                continue;
+            }else if(resultCode == -1){
+//                map.put(productId,-1);
+                log.error("【商品{}库存不足】",productId);
+                continue;
+            }else{
+                //只把库存存在并且库存充足的商品参与订单，不符合条件的，给用户一个提示即可
+                messageVo.setCartVo(cartVo);
+                messageVo.setUserId(userId);
+                messageVo.setShippingId(shippingId);
+                messageVoList.add(messageVo);
+                messageVo.setOrderNo(orderNo);
+            }
+        }
 
+        //3.判断一下list是不是空的
+        if(messageVoList.size() == 0){
+            return ServerResponse.createByErrorMessage("商品不存在或者库存不够");
+        }
 
-        //3. 用户进行下单,参数userId,ShippingId传给MQ取异步下单
+        //4. 扣减库存、生成订单,参数userId,ShippingId传给MQ取异步下单
+        amqpTemplate.convertAndSend("order-queue",JsonUtil.obj2String(messageVoList));
 
-        return null;
+        //这里由于前端限制（不会改前端，应该是先显示排队中，所以直接就取数据库查询订单信息返回给前端）
+        //TODO 这里就直接去数据库查一下
+
+        boolean flag = false;
+        do{
+            Order order = orderMapper.selectByOrderNo(orderNo);
+            if (order != null){
+                flag = true;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }while (!flag);
+        OrderVo orderVo = assembleResultOrderVo(orderNo);
+
+        return ServerResponse.createBySuccess(orderVo);
     }
+
+    private OrderVo assembleResultOrderVo(long orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
+        return assembleOrderVo(order,orderItemList);
+    }
+
 
     @Override
     public ServerResponse cancel(Integer userId, Long orderNo) {
@@ -234,6 +304,126 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public ServerResponse getOrderList(Integer userId, int pageNum, int pageSize) {
         return null;
+    }
+
+
+    @Transactional
+    public ServerResponse createOrderProcess(List<MessageVo> resultList){
+        //0.获取userId和shippingId
+        Integer userId = resultList.get(0).getUserId();
+        Integer shippingId = resultList.get(0).getShippingId();
+        long orderNo = resultList.get(0).getOrderNo();
+
+        //1.获取购物车列表
+        CartVo cartVo = resultList.get(0).getCartVo();
+
+        List<CartProductVo> cartProductVoList = cartVo.getCartProductVoList();
+        //2.根据购物车构建订单详情
+        ServerResponse response = this.getCartOrderItem(userId,cartProductVoList);
+        if(!response.isSuccess()){
+            return response;
+        }
+        List<OrderItem> orderItemList = (List<OrderItem>) response.getData();
+        if(CollectionUtils.isEmpty(orderItemList)){
+            return ServerResponse.createByErrorMessage("购物车为空");
+        }
+        //3.计算总价
+        BigDecimal payment = this.getOrderTotalPrice(orderItemList);
+        //4.构建订单主表
+        Order order = this.assembleOrder(userId,shippingId,payment,orderNo);
+        if(order == null){
+            return ServerResponse.createByErrorMessage("生成订单失败");
+        }
+        for(OrderItem orderItem:orderItemList){
+            orderItem.setOrderNo(orderNo);
+        }
+        //4.批量插入订单详情
+        orderItemMapper.batchInsert(orderItemList);
+
+        return ServerResponse.createBySuccess("扣减库存、生成订单成功...",userId);
+    }
+
+    @Override
+    public ServerResponse stockAndOrderprocess(List<MessageVo> result) {
+        ServerResponse response = this.createOrderProcess(result);
+        if(response.isSuccess()){
+            Integer userId = (Integer) response.getData();
+            amqpTemplate.convertAndSend("cart-queue",userId);
+        }
+        //至于数据库的扣减库存，采用定时任务去redis中去同步
+        return ServerResponse.createBySuccessMessage("扣减库存、生成订单成功");
+    }
+
+    private Order assembleOrder(Integer userId,Integer shippingId,BigDecimal payment,long orderNo){
+        Order order = new Order();
+        order.setOrderNo(orderNo);
+        order.setStatus(Constants.OrderStatusEnum.NO_PAY.getCode());
+        order.setPostage(0);
+        order.setPaymentType(Constants.PaymentTypeEnum.ONLINE_PAY.getCode());
+        order.setPayment(payment);
+
+        order.setUserId(userId);
+        order.setShippingId(shippingId);
+        //发货时间等等
+        //付款时间等等
+        int rowCount = orderMapper.insert(order);
+        if(rowCount > 0){
+            return order;
+        }
+        return null;
+    }
+
+
+    private BigDecimal getOrderTotalPrice(List<OrderItem> orderItemList) {
+        BigDecimal payment = new BigDecimal("0");
+        for(OrderItem orderItem:orderItemList){
+            payment = BigDecimalUtil.add(payment.doubleValue(),orderItem.getTotalPrice().doubleValue());
+        }
+        return payment;
+    }
+
+    private ServerResponse getCartOrderItem(Integer userId, List<CartProductVo> cartList) {
+        if(CollectionUtils.isEmpty(cartList)){
+            return ServerResponse.createByErrorMessage("购物车为空");
+        }
+        List<OrderItem> orderItemList = Lists.newArrayList();
+
+        for(CartProductVo cart:cartList){
+            OrderItem orderItem = new OrderItem();
+
+            String productStr = commonCacheUtil.getCacheValue(Constants.PRODUCT_TOKEN_PREFIX);
+            Product product = null;
+            if(productStr == null){
+                ServerResponse response = productClient.queryProduct(cart.getProductId());
+                Object object = response.getData();
+                String objStr = JsonUtil.obj2String(object);
+                product = (Product) JsonUtil.Str2Obj(objStr,Product.class);
+            }else {
+                product = (Product) JsonUtil.Str2Obj(productStr,Product.class);
+            }
+
+            if(product == null){
+                return ServerResponse.createByErrorMessage("商品不存在");
+            }
+
+            //判断产品的是否在售
+            if(product.getStatus() != Constants.Product.PRODUCT_ON){
+                return ServerResponse.createByErrorMessage("产品不在售卖状态");
+            }
+            //判断产品库存是否足够
+            if(cart.getQuantity() > product.getStock()){
+                return ServerResponse.createByErrorMessage("产品库存不够");
+            }
+            orderItem.setUserId(userId);
+            orderItem.setProductId(product.getId());
+            orderItem.setProductImage(product.getMainImage());
+            orderItem.setProductName(product.getName());
+            orderItem.setCurrentUnitPrice(product.getPrice());
+            orderItem.setQuantity(cart.getQuantity());
+            orderItem.setTotalPrice(BigDecimalUtil.mul(cart.getQuantity(),product.getPrice().doubleValue()));
+            orderItemList.add(orderItem);
+        }
+        return ServerResponse.createBySuccess(orderItemList);
     }
 
 

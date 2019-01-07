@@ -15,5 +15,7 @@ public interface CartClient {
     @RequestMapping("/cart/getCartList.do")
     ServerResponse getCartList();
 
+    @RequestMapping("/cart/removeCart.do")
+    ServerResponse removeCart();
 
 }
