@@ -10,6 +10,11 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/snailmall
     username: root
     password: root
+  zipkin:
+    base-url: http://106.14.163.235:9411
+  sleuth:
+    sampler:
+      probability: 1
 redis:
   host: 111.231.119.253
   port: 6379

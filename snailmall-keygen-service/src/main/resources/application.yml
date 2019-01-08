@@ -8,6 +8,11 @@ eureka:
 spring:
   application:
     name: keygen-service
+  zipkin:
+    base-url: http://106.14.163.235:9411
+  sleuth:
+    sampler:
+      probability: 1
 server:
   port: 8087
 zk:

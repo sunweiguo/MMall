@@ -3,6 +3,9 @@ eureka:
     service-url:
       defaultZone: http://111.231.119.253:8761/eureka
 spring:
+  zipkin:
+    sender:
+      type: web
   application:
     name: user-service
   cloud:
@@ -38,4 +41,3 @@ logging:
 mybatis:
   mapper-locations: classpath:com/njupt/swg/**/**.xml
   type-aliases-package: classpath:com.njupt.swg.**.entity
-
