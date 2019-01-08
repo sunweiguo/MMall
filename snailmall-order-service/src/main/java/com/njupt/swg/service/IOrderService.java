@@ -6,6 +6,7 @@ import com.njupt.swg.vo.MessageVo;
 import com.njupt.swg.vo.OrderVo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author swg.
@@ -46,4 +47,10 @@ public interface IOrderService {
 
     /**扣减库存、下订单**/
     ServerResponse stockAndOrderprocess(List<MessageVo> result);
+
+    ServerResponse pay(Integer id, Long orderNo, String path);
+
+    ServerResponse query_order_pay_status(Integer id, Long orderNo);
+
+    ServerResponse aliCallback(Map<String, String> params);
 }
