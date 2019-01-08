@@ -6,6 +6,9 @@ eureka:
     ip-address: 111.231.119.253
     prefer-ip-address: true
 spring:
+  zipkin:
+    sender:
+      type: web
   application:
     name: keygen-service
   zipkin:

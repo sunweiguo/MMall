@@ -12,9 +12,12 @@ spring:
     password: root
   zipkin:
     base-url: http://106.14.163.235:9411
+    sender:
+      type: web
   sleuth:
     sampler:
       probability: 1
+
 redis:
   host: 111.231.119.253
   port: 6379

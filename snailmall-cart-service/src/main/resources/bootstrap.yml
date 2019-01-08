@@ -3,6 +3,9 @@ eureka:
     service-url:
       defaultZone: http://111.231.119.253:8761/eureka
 spring:
+  zipkin:
+    sender:
+      type: web
   application:
     name: cart-service
   cloud:
