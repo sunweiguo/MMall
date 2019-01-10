@@ -60,6 +60,8 @@ public class UserServiceImpl implements IUserService{
         userResVO.setEmail(resultUser.getEmail());
         userResVO.setPhone(resultUser.getPhone());
         userResVO.setRole(resultUser.getRole());
+        userResVO.setQuestion(resultUser.getQuestion());
+        userResVO.setAnswer(resultUser.getAnswer());
         userResVO.setCreateTime(resultUser.getCreateTime());
         userResVO.setUpdateTime(new Date());
 

@@ -123,6 +123,8 @@ public class UserController {
         userResVO.setEmail(currentUser.getEmail());
         userResVO.setPhone(currentUser.getPhone());
         userResVO.setRole(currentUser.getRole());
+        userResVO.setQuestion(currentUser.getQuestion());
+        userResVO.setAnswer(currentUser.getAnswer());
         userResVO.setCreateTime(currentUser.getCreateTime());
         userResVO.setUpdateTime(currentUser.getUpdateTime());
         return ServerResponse.createBySuccess("登陆用户获取自身信息成功",userResVO);

@@ -34,18 +34,21 @@ public class FileServiceImpl implements IFileService{
             fileDir.setWritable(true);
             fileDir.mkdirs();
         }
+        log.info("【文件上传路径为：{}】",fileDir);
         File targetFile = new File(path,uploadFileName);
-
 
         try {
             file.transferTo(targetFile);
             //文件已经上传成功了
+            log.info("【文件上传本地服务器成功】");
 
 
             FtpUtil.uploadFile(Lists.newArrayList(targetFile));
             //已经上传到ftp服务器上
+            log.info("【文件上传到文件服务器成功】");
 
             targetFile.delete();
+            log.info("【删除本地文件】");
         } catch (IOException e) {
             log.error("上传文件异常",e);
             return null;

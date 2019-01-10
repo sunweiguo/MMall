@@ -12,14 +12,14 @@ spring:
         git:
           uri: https://github.com/sunweiguo/config-center-for-snailmall
           username: sunweiguo
-          password: xxxxxxxxx
-          search-paths: user-service-config,category-service-config,product-service-config,order-service-config,address-service-config,shipping-service-config,cart-service-config
+          password: swg22xf?
+          search-paths: user-service-config,category-service-config,product-service-config,order-service-config,keygen-service-config,shipping-service-config,cart-service-config,gateway-service-config
     bus:
       trace:
         enabled: true
       enabled: true
 server:
-  port: 8080
+  port: 8079
 eureka:
   client:
     service-url:

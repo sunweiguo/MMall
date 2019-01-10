@@ -10,6 +10,7 @@ import com.njupt.swg.common.utils.JsonUtil;
 import com.njupt.swg.entity.Shipping;
 import com.njupt.swg.entity.User;
 import com.njupt.swg.service.IShippingService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ import java.util.Enumeration;
  */
 @RestController
 @RequestMapping("/shipping/")
+@Slf4j
 public class ShippingController extends BaseController{
 
     @Autowired
@@ -86,6 +88,7 @@ public class ShippingController extends BaseController{
      */
     @RequestMapping("getShipping.do")
     ServerResponse getShipping(HttpServletRequest httpServletRequest,Integer shippingId){
+        log.info("【开始根据{}获取地址】",shippingId);
         User user = null;
         Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
         if (headerNames != null) {
@@ -94,13 +97,16 @@ public class ShippingController extends BaseController{
                 if(name.equalsIgnoreCase("snailmall_login_token")){
                     String value = httpServletRequest.getHeader(name);
                     if(StringUtils.isBlank(value)){
+                        log.error("【获取用户cookie失败】");
                         return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),"用户未登陆，无法获取当前用户信息");
                     }
                     String userJsonStr = commonCacheUtil.getCacheValue(value);
                     if(userJsonStr == null){
+                        log.error("【获取用户信息失败】");
                         return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),"用户未登陆，无法获取当前用户信息");
                     }
                     user = JsonUtil.Str2Obj(userJsonStr,User.class);
+                    log.info("【获取到的用户为：{}】",user);
                 }
             }
         }

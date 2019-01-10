@@ -36,16 +36,22 @@ public class OrderController extends BaseController{
      * 创建订单
      */
     @RequestMapping("create.do")
-    public ServerResponse create(HttpServletRequest httpServletRequest, Integer shippingId){
+    public ServerResponse create(HttpServletRequest httpServletRequest, @RequestParam("shippingId") Integer shippingId){
         User user = getCurrentUser(httpServletRequest);
-        return orderService.createOrder(user.getId(),shippingId);
+        ServerResponse response = orderService.createOrder(user.getId(),shippingId);
+        if(response.isSuccess()) {
+            log.info("【生成订单成功:{}】",response.getData());
+            return response;
+        }
+        log.error("【提交订单失败:{}】",response);
+        return ServerResponse.createByErrorMessage("提交订单失败:"+response.getMsg());
     }
 
     /**
      * 取消订单
      */
     @RequestMapping("cancel.do")
-    public ServerResponse cancel(HttpServletRequest httpServletRequest, Long orderNo){
+    public ServerResponse cancel(HttpServletRequest httpServletRequest, @RequestParam("orderNo") Long orderNo){
         User user = getCurrentUser(httpServletRequest);
         return orderService.cancel(user.getId(),orderNo);
     }
@@ -63,7 +69,7 @@ public class OrderController extends BaseController{
      * 订单详情
      */
     @RequestMapping("detail.do")
-    public ServerResponse detail(HttpServletRequest httpServletRequest,Long orderNo){
+    public ServerResponse detail(HttpServletRequest httpServletRequest,@RequestParam("orderNo") Long orderNo){
         User user = getCurrentUser(httpServletRequest);
         return orderService.getOrderDetail(user.getId(),orderNo);
     }
@@ -80,9 +86,10 @@ public class OrderController extends BaseController{
 
 
     @RequestMapping("pay.do")
-    public ServerResponse pay(Long orderNo, HttpServletRequest request){
+    public ServerResponse pay(@RequestParam("orderNo") Long orderNo, HttpServletRequest request){
         User user = getCurrentUser(request);
         if(user == null){
+            log.error("【用户未获取到，检查登陆信息;{}】",user);
             return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());
         }
         String path = request.getSession().getServletContext().getRealPath("upload");
@@ -90,7 +97,7 @@ public class OrderController extends BaseController{
     }
 
     @RequestMapping("query_order_pay_status.do")
-    public ServerResponse<Boolean> query_order_pay_status(Long orderNo,HttpServletRequest request){
+    public ServerResponse<Boolean> query_order_pay_status(@RequestParam("orderNo") Long orderNo,HttpServletRequest request){
         User user = getCurrentUser(request);
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseEnum.NEED_LOGIN.getCode(),ResponseEnum.NEED_LOGIN.getDesc());

@@ -2,6 +2,12 @@ eureka:
   client:
     service-url:
       defaultZone: http://111.231.119.253:8761/eureka
+feign:
+  client:
+    config:
+      feignName:
+        connectTimeout: 20000
+        readTimeout: 20000
 spring:
   application:
     name: order-service

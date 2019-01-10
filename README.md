@@ -64,9 +64,10 @@ spring cloud并不是像spring是一个框架，他是解决微服务的一种�
 - [x] 2019/1/8 继续完善订单接口，完成支付服务，就直接放在订单服务里面了，因为与订单逻辑紧密，就放在一起了。
 - [x] 2019/1/8 使用了一下swagger，发现代码侵入比较强，每一个接口上面都要手动打上响应的注解
 - [x] 2019/1/8 关于hystrix熔断与降级，可以引入hystrix的依赖，用@HystrixCommand注解来控制超时时间、服务降级以及服务熔断。也可以直接再@FeignClient接口中指定服务降级的类，这里不演示了，因为设置比如超时时间，我还要重新测试，写起来很简单，测起来有点儿麻烦
-- [x] 2019/1/10 服务跟踪，服务端是直接用的线程的，只需要下载：wget -O zipkin.jar  'https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec'，然后nohup java -jar zipkin.jar > zipkin.server.out & ，开放9411端口，打开浏览器http://ip:9411看到页面即可。
+- [x] 2019/1/9 服务跟踪，服务端是直接用的线程的，只需要下载：wget -O zipkin.jar  'https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec'，然后nohup java -jar zipkin.jar > zipkin.server.out & ，开放9411端口，打开浏览器http://ip:9411看到页面即可。
 客户端只需要添加相应依赖和配置文件即可。用客户端测试，发现死活不出现我的请求，经过搜索，发现需要增加spring.zipkin.sender.type= web这个配置项才行.
-- [ ] 2019/1/10 自动化部署
+- [x] 2019/1/10 初步把项目部署到服务器上，进行测试，bug多多，修改中...
+- [x] 2019/1/10 改了一天的bug，其中网关的超时时间以及feign的超时时间都要改大一点，否则会超时报错。最终成功，花了三台服务器，部署了11个服务。后面把部署过程写一下。
 - [ ] 2019/1/11 整合前端
 - [ ] 2019/1/12 docker部署
 ## 项目启动

@@ -2,21 +2,27 @@ eureka:
   client:
     service-url:
       defaultZone: http://111.231.119.253:8761/eureka
-  instance:
-    ip-address: 111.231.119.253
-    prefer-ip-address: true
 spring:
-  zipkin:
-    sender:
-      type: web
   application:
     name: keygen-service
   zipkin:
     base-url: http://106.14.163.235:9411
+    sender:
+      type: web
   sleuth:
     sampler:
       probability: 1
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: SNAILMALL-CONFIG-SERVER
+      profile: dev
+    bus:
+      trace:
+        enabled: true
+      enabled: true
 server:
   port: 8087
 zk:
-  host: 127.0.0.1
+  host: 111.231.119.253

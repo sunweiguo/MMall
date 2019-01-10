@@ -18,5 +18,5 @@ public interface CategoryClient {
     ServerResponse getCategoryDetail(@RequestParam("categoryId") Integer categoryId);
 
     @RequestMapping("/manage/category/get_deep_category.do")
-    ServerResponse getDeepCategory(Integer categoryId);
+    ServerResponse getDeepCategory(@RequestParam(value = "categoryId") Integer categoryId);
 }

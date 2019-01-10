@@ -32,7 +32,7 @@ public class MessageReceiver {
     public void proess(String message){
         log.info("接收到的消息为:{}",message);
         List<MessageVo> result = JsonUtil.Str2Obj(message, List.class, MessageVo.class);
-        log.info("【MQ解析数据,前者为userId,后者为productId：{}】",result);
+        log.info("【MQ解析数据,前者为userId,后者为product信息：{}】",result);
         //扣减库存、下订单
         //是先扣减库存，扣减成功才可以下订单，但是这是两个数据库，那么属于跨库的事务，所以如何解决呢？
         //一种方案是：利用消息队列，订单服务订阅扣减库存服务，一旦发现数据库的库存扣减成功，就去扣减插入订单；

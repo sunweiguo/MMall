@@ -2,6 +2,9 @@ eureka:
   client:
     service-url:
       defaultZone: http://111.231.119.253:8761/eureka
+#  instance:
+#    ip-address: 106.14.163.235
+#    prefer-ip-address: true
 spring:
   zipkin:
     sender:
@@ -35,7 +38,7 @@ spring:
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
 server:
-  port: 8081
+  port: 8088
 logging:
   config: classpath:logback.xml
 mybatis:

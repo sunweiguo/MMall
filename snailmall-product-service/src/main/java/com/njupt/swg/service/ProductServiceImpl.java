@@ -269,7 +269,10 @@ public class ProductServiceImpl implements IProductService{
         productDetailVo.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix","http://image.snail.com/"));
         //返回给前端还需要一下该商品所处品类的父品类id，所以需要去品类服务中去查询一下，这里就要用到Feign
         if(categoryClient.getCategoryDetail(product.getCategoryId()).isSuccess()){
-            Category category = (Category) categoryClient.getCategoryDetail(product.getCategoryId()).getData();
+            ServerResponse response = categoryClient.getCategoryDetail(product.getCategoryId());
+            Object object = response.getData();
+            String objStr = JsonUtil.obj2String(object);
+            Category category = (Category) JsonUtil.Str2Obj(objStr,Category.class);
             productDetailVo.setParentCategoryId(category.getParentId());
         }else {
             productDetailVo.setParentCategoryId(0);

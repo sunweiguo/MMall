@@ -1,0 +1,67 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://111.231.119.253:8761/eureka
+spring:
+  application:
+    name: api-gateway
+  zipkin:
+    base-url: http://106.14.163.235:9411
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: SNAILMALL-CONFIG-SERVER
+      profile: dev
+    bus:
+      trace:
+        enabled: true
+      enabled: true
+server:
+  port: 8080
+
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+zuul:
+  host:
+    socket-timeout-millis: 10000
+    connect-timeout-millis: 10000
+    max-total-connections: 20000
+  routes:
+    category:
+      path: /category/**/
+      serviceId: category-service
+      sensitiveHeaders:
+    user:
+      path: /user/**/
+      serviceId: user-service
+      sensitiveHeaders:
+    prodcut:
+      path: /product/**/
+      serviceId: product-service
+      sensitiveHeaders:
+    shipping:
+      path: /shipping/**/
+      serviceId: shipping-service
+      sensitiveHeaders:
+    cart:
+      path: /cart/**/
+      serviceId: cart-service
+      sensitiveHeaders:
+    order:
+      path: /order/**/
+      serviceId: order-service
+      sensitiveHeaders:

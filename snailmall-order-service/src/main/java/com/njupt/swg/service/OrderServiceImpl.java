@@ -168,7 +168,7 @@ public class OrderServiceImpl implements IOrderService {
         orderVo.setCloseTime(DateTimeUtil.dateToStr(order.getCloseTime()));
 
 
-        orderVo.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix"));
+        orderVo.setImageHost("http://img.oursnail.cn/");
 
 
         List<OrderItemVo> orderItemVoList = Lists.newArrayList();
@@ -224,10 +224,14 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     /***门户订单管理 start***/
+    /**
+     * 创建订单
+     */
     @Override
     public ServerResponse createOrder(Integer userId, Integer shippingId) {
         //1. TODO 对这个userId加上一个分布式锁，锁上一小段时间，防止这个用户在极短时间内重复点击下单
 
+        log.info("【开始创建订单，userId为：{}，shippingID为：{}】",userId,shippingId);
         //2. lua脚本来判断redis中库存还有没有，并且减库存---redis预减库存
         ServerResponse response = cartClient.getCartList();
         if(response.getStatus() == ResponseEnum.NEED_LOGIN.getCode()){
@@ -238,13 +242,17 @@ public class OrderServiceImpl implements IOrderService {
         String objStr = JsonUtil.obj2String(object);
         log.info("【获取到的购物车信息为：{}】",objStr);
         if(objStr == null){
+            log.error("【获取购物车信息失败】");
             return ServerResponse.createByErrorMessage("获取购物车失败");
         }
         CartVo cartVo = JsonUtil.Str2Obj(objStr,CartVo.class);
         List<CartProductVo> cartProductVoList = cartVo.getCartProductVoList();
         List<MessageVo> messageVoList = new ArrayList<>();
         //这里生成订单号，方便查询
-        long orderNo = Long.parseLong(keyGenClient.generateKey());
+        String orderNoStr = keyGenClient.generateKey();
+        orderNoStr = orderNoStr.substring(0,orderNoStr.length()-3);
+        long orderNo = Long.parseLong(orderNoStr);
+        log.info("【生成的订单号为:{}】",orderNo);
         for(CartProductVo cartProductVo:cartProductVoList){
             MessageVo messageVo = new MessageVo();
             Integer productId = cartProductVo.getProductId();
@@ -271,6 +279,7 @@ public class OrderServiceImpl implements IOrderService {
 
         //3.判断一下list是不是空的
         if(messageVoList.size() == 0){
+            log.info("【商品不存在或者库存不够】");
             return ServerResponse.createByErrorMessage("商品不存在或者库存不够");
         }
 
@@ -278,22 +287,28 @@ public class OrderServiceImpl implements IOrderService {
         amqpTemplate.convertAndSend("order-queue",JsonUtil.obj2String(messageVoList));
 
         //这里由于前端限制（不会改前端，应该是先显示排队中，所以直接就取数据库查询订单信息返回给前端）
-        //TODO 这里就直接去数据库查一下
+        //这里就直接返回成功了
 
-        boolean flag = false;
-        do{
-            Order order = orderMapper.selectByOrderNo(orderNo);
-            if (order != null){
-                flag = true;
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }while (!flag);
-        OrderVo orderVo = assembleResultOrderVo(orderNo);
-
+//        boolean flag = false;
+//        do{
+//
+//            Order order = orderMapper.selectByOrderNo(orderNo);
+//            if (order != null){
+//                log.info("【订单{}生成好了，这里直接返回给前端】",order.getOrderNo());
+//                flag = true;
+//                break;
+//            }
+//            log.error("【订单{}还未生成好，继续下次循环】",orderNo);
+//            try {
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }while (!flag);
+        log.info("【返回给前端的orderNo：{}】",orderNo);
+        OrderVo orderVo = new OrderVo();
+        orderVo.setOrderNo(orderNo);
+        log.info("【返回给前端的数据为：{}】",orderVo);
         return ServerResponse.createBySuccess(orderVo);
     }
 
@@ -352,7 +367,7 @@ public class OrderServiceImpl implements IOrderService {
         }
         orderProductVo.setProductTotalPrice(payment);
         orderProductVo.setOrderItemVoList(orderItemVoList);
-        orderProductVo.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix"));
+        orderProductVo.setImageHost("http://img.oursnail.cn/");
         return ServerResponse.createBySuccess(orderProductVo);
     }
 
@@ -360,9 +375,11 @@ public class OrderServiceImpl implements IOrderService {
     public ServerResponse getOrderDetail(Integer userId, Long orderNo) {
         Order order = orderMapper.selectByUserIdOrderNo(userId,orderNo);
         if(order == null){
+            log.error("【用户{}不存在{}订单】",userId,orderNo);
             return ServerResponse.createByErrorMessage("订单不存在");
         }
         List<OrderItem> orderItemList = orderItemMapper.getByOrderNoUserId(orderNo,userId);
+        log.info("获取订单详情列表成功{}",orderItemList);
         OrderVo orderVo = this.assembleOrderVo(order,orderItemList);
         return ServerResponse.createBySuccess(orderVo);
     }
@@ -381,12 +398,15 @@ public class OrderServiceImpl implements IOrderService {
     @Transactional
     public ServerResponse createOrderProcess(List<MessageVo> resultList){
         //0.获取userId和shippingId
+        log.info("【生成订单主表和订单详情表】");
         Integer userId = resultList.get(0).getUserId();
         Integer shippingId = resultList.get(0).getShippingId();
         long orderNo = resultList.get(0).getOrderNo();
+        log.info("【获取userId:{}和shippingId:{}，orderNo:{}】",userId,shippingId,orderNo);
 
         //1.获取购物车列表
         CartVo cartVo = resultList.get(0).getCartVo();
+        log.info("【获取购物车列表:{}】",cartVo);
 
         List<CartProductVo> cartProductVoList = cartVo.getCartProductVoList();
         //2.根据购物车构建订单详情
@@ -396,13 +416,16 @@ public class OrderServiceImpl implements IOrderService {
         }
         List<OrderItem> orderItemList = (List<OrderItem>) response.getData();
         if(CollectionUtils.isEmpty(orderItemList)){
+            log.error("【购物车为空】");
             return ServerResponse.createByErrorMessage("购物车为空");
         }
         //3.计算总价
         BigDecimal payment = this.getOrderTotalPrice(orderItemList);
+        log.info("【计算总价为：{}】",payment);
         //4.构建订单主表
         Order order = this.assembleOrder(userId,shippingId,payment,orderNo);
         if(order == null){
+            log.error("【生成订单主表失败】");
             return ServerResponse.createByErrorMessage("生成订单失败");
         }
         for(OrderItem orderItem:orderItemList){
@@ -416,9 +439,12 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public ServerResponse stockAndOrderprocess(List<MessageVo> result) {
+        log.info("【开始消费，参数未{}】",result);
         ServerResponse response = this.createOrderProcess(result);
+        log.info("订单生成完毕，下面就是去清空购物车，MQ异步出去");
         if(response.isSuccess()){
             Integer userId = (Integer) response.getData();
+            log.info("【需要清空购物车的用户为:{}】",userId);
             amqpTemplate.convertAndSend("cart-queue",userId);
         }
         //至于数据库的扣减库存，采用定时任务去redis中去同步
@@ -535,21 +561,20 @@ public class OrderServiceImpl implements IOrderService {
 
         //1.获取订单号
         String outTradeNo = order.getOrderNo().toString();
-
+        log.info("【1.获取订单号：{}】",orderNo);
 
         //2.订单标题，粗略描述用户的支付目的。如“xxx品牌xxx门店当面付扫码消费”
         String subject = new StringBuilder().append("快乐蜗牛商城扫码支付,订单号:").append(outTradeNo).toString();
-
+        log.info("【2.订单标题：{}】",subject);
 
         // 3.(必填) 订单总金额，单位为元，不能超过1亿元
         // 如果同时传入了【打折金额】,【不可打折金额】,【订单总金额】三者,则必须满足如下条件:【订单总金额】=【打折金额】+【不可打折金额】
         String totalAmount = order.getPayment().toString();
-
+        log.info("【3.订单总金额：{}】",totalAmount);
 
         // 4.(可选) 订单不可打折金额，可以配合商家平台配置折扣活动，如果酒水不参与打折，则将对应金额填写至此字段
         // 如果该值未传入,但传入了【订单总金额】,【打折金额】,则该值默认为【订单总金额】-【打折金额】
         String undiscountableAmount = "0";
-
 
 
         // 5.卖家支付宝账号ID，用于支持一个签约账号下支持打款到不同的收款账号，(打款到sellerId对应的支付宝账号)
@@ -558,7 +583,7 @@ public class OrderServiceImpl implements IOrderService {
 
         // 6.订单描述，可以对交易或商品进行一个详细地描述，比如填写"购买商品2件共15.00元"
         String body = new StringBuilder().append("订单").append(outTradeNo).append("购买商品共").append(totalAmount).append("元").toString();
-
+        log.info("【4.订单描述：{}】",body);
 
         // 7.商户操作员编号，添加此参数可以为商户操作员做销售统计
         String operatorId = "test_operator_id";
@@ -569,8 +594,6 @@ public class OrderServiceImpl implements IOrderService {
         // 9.业务扩展参数，目前可添加由支付宝分配的系统商编号(通过setSysServiceProviderId方法)，详情请咨询支付宝技术支持
         ExtendParams extendParams = new ExtendParams();
         extendParams.setSysServiceProviderId("2088100200300400500");
-
-
 
 
         // 10.支付超时，定义为120分钟
@@ -593,8 +616,9 @@ public class OrderServiceImpl implements IOrderService {
                 .setUndiscountableAmount(undiscountableAmount).setSellerId(sellerId).setBody(body)
                 .setOperatorId(operatorId).setStoreId(storeId).setExtendParams(extendParams)
                 .setTimeoutExpress(timeoutExpress)
-                .setNotifyUrl(PropertiesUtil.getProperty("alipay.callback.url"))//支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
+                .setNotifyUrl("http://www.oursnail.cn/order/order/alipay_callback.do")//支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
                 .setGoodsDetailList(goodsDetailList);
+
 
         // 13.创建扫码支付请求成功后，支付宝返回一串二维码串
         AlipayF2FPrecreateResult result = tradeService.tradePrecreate(builder);
@@ -624,7 +648,7 @@ public class OrderServiceImpl implements IOrderService {
                     log.error("上传二维码异常",e);
                 }
                 log.info("qrPath:" + qrPath);
-                String qrUrl = PropertiesUtil.getProperty("ftp.server.http.prefix")+targetFile.getName();
+                String qrUrl = "http://img.oursnail.cn/"+targetFile.getName();
                 resultMap.put("qrUrl",qrUrl);
                 return ServerResponse.createBySuccess(resultMap);
             case FAILED:

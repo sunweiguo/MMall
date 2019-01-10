@@ -14,6 +14,7 @@ import com.njupt.swg.entity.User;
 import com.njupt.swg.service.IFileService;
 import com.njupt.swg.service.IProductService;
 import com.njupt.swg.vo.ProductDetailVo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +32,9 @@ import java.util.Map;
  * @CONTACT 317758022@qq.com
  * @DESC 后台商品服务
  */
-//TODO 上传图片和富文本上传没有实验，直接复制代码过来的，应该是可用的
 @RestController
 @RequestMapping("/manage/product")
+@Slf4j
 public class ProductManageController {
     @Autowired
     private IProductService productService;
@@ -70,11 +71,14 @@ public class ProductManageController {
     public ServerResponse upload(@RequestParam(value = "upload_file",required = false) MultipartFile file, HttpServletRequest request){
         String path = request.getSession().getServletContext().getRealPath("upload");
         String targetFileName = fileService.upload(file,path);
-        String url = PropertiesUtil.getProperty("ftp.server.http.prefix")+targetFileName;
+        String url = "http://img.oursnail.cn/"+targetFileName;
+
+        log.info("【上传的图片路径为：{}】",url);
 
         Map fileMap = Maps.newHashMap();
         fileMap.put("uri",targetFileName);
         fileMap.put("url",url);
+        log.info("【返回数据为:{}】",fileMap);
         return ServerResponse.createBySuccess(fileMap);
     }
 
@@ -133,10 +137,11 @@ public class ProductManageController {
             resultMap.put("msg", "上传失败");
             return resultMap;
         }
-        String url = PropertiesUtil.getProperty("ftp.server.http.prefix")+targetFileName;
+        String url = PropertiesUtil.getProperty("ftp.server.http.prefix","http://img.oursnail.cn/")+targetFileName;
         resultMap.put("success", true);
         resultMap.put("msg", "上传成功");
         resultMap.put("file_path", url);
+        log.info("【返回数据为:{}】",resultMap);
         httpServletResponse.addHeader("Access-Control-Allow-Headers", "X-File-Name");
         return resultMap;
     }

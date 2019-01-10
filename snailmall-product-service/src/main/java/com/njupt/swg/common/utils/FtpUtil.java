@@ -32,7 +32,7 @@ public class FtpUtil {
         FtpUtil ftpUtil = new FtpUtil(ftpIp,21,ftpUser,ftpPass);
         log.info("开始连接ftp服务器");
         boolean result = ftpUtil.uploadFile("img",fileList);
-        log.info("开始连接ftp服务器,结束上传,上传结果:{}");
+        log.info("开始连接ftp服务器,结束上传,上传结果:{}",result);
         return result;
     }
 
@@ -41,6 +41,7 @@ public class FtpUtil {
         boolean uploaded = true;
         FileInputStream fis = null;
         //连接FTP服务器
+        log.info("【开始连接文件服务器】");
         if(connectServer(this.ip,this.port,this.user,this.pwd)){
             try {
                 ftpClient.changeWorkingDirectory(remotePath);

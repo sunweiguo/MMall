@@ -17,6 +17,8 @@ public class UserResVO {
     private String email;
     private int role;
     private String phone;
+    private String question;
+    private String answer;
     private Date createTime;//返回前端的是时间戳
     private Date updateTime;
 }
