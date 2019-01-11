@@ -2,12 +2,10 @@ server:
   port: 8761
 spring:
   application:
-    name: snailmall-eureka-server
+    name: snailmall-eureka-server-2
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
     service-url:
-      defaultZone: http://localhost:${server.port}/eureka
+      defaultZone: http://111.231.119.253:8761/eureka
   server:
     enable-self-preservation: false

@@ -22,7 +22,11 @@
 
 ## 项目详细描述
 
-从比较简单的架构开始，可以用搭建集群的方式来提升性能，比如用tomcat集群和redis集群提升性能：
+整体效果演示：
+
+![image](http://bloghello.oursnail.cn/jdfw.gif)
+
+在学习的视频中，一期只是实现业务功能，单体架构，一个tomcat。二期对其做了集群，并且解决了集群模式下session存储问题，实现了比较简单的单点登陆功能。架构如下：
 
 ![image](http://bloghello.oursnail.cn/snailmall-1.png)
 
@@ -32,11 +36,23 @@
 
 spring cloud并不是像spring是一个框架，他是解决微服务的一种方案，是由各种优秀开源组件共同配合而实现的微服务治理架构。下面的图是我构思的项目结构图：
 
-待补充
+![image](http://bloghello.oursnail.cn/%E5%95%86%E5%9F%8E%E6%9E%B6%E6%9E%84-2.png)
+
+由于资源的原因，只有三台最低配的服务器，所以本来想做的基于ES的全文检索服务没有做，也没有分库分表。
+
+至于定时任务以及Hystrix服务熔断和降级，比较简单，就不做了。
 
 - 项目的接口文档详见wiki：https://github.com/sunweiguo/spring-cloud-for-snailmall/wiki
 - 项目的数据库表设计：snailmall.sql
-- 
+
+下面详细介绍每个模块实现的大体思路（仅供参考，毕竟应届生，真实项目没做过）：
+
+- 用户模块
+
+
+-
+
+
 
 
 ## 项目进展
