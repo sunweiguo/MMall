@@ -26,7 +26,8 @@
 
 整体效果演示：
 
-<iframe height=500 width=500 src="http://bloghello.oursnail.cn/jdfw.gif">
+![image](http://xiaozhao.oursnail.cn/jdfw.gif)
+
 
 > 经过一遍遍测试，商城还是存在一些无伤大雅的bug，但是主要还是锻炼自己的能力嘛！
 >
