@@ -29,7 +29,7 @@ public class JedisPoolWrapper {
             config.setMaxTotal(parameters.getRedisMaxTotal());
             config.setMaxIdle(parameters.getRedisMaxIdle());
             config.setMaxWaitMillis(parameters.getRedisMaxWaitMillis());
-            jedisPool = new JedisPool(config,parameters.getRedisHost(),parameters.getRedisPort(),2000,"sunweiguo2018@");
+            jedisPool = new JedisPool(config,parameters.getRedisHost(),parameters.getRedisPort(),2000,"xxx");
             log.info("【初始化redis连接池成功】");
         }catch (Exception e){
             log.error("【初始化redis连接池失败】",e);

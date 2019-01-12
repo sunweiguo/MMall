@@ -43,7 +43,7 @@ public class SnailmallOrderServiceApplication {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(poolConfig);
         jedisConnectionFactory.setHostName(parameters.getRedisHost());
         jedisConnectionFactory.setPort(parameters.getRedisPort());
-        jedisConnectionFactory.setPassword("sunweiguo2018@");
+        jedisConnectionFactory.setPassword("xxx");
         return jedisConnectionFactory;
     }
 
