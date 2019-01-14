@@ -33,4 +33,6 @@ public interface UserMapper {
     User getUserByUsername(String username);
 
     User getUserByUsernameQuestionAnswer(String username, String question, String answer);
+
+    Integer checkEmailValid(@Param("email") String email,@Param("userId") Integer userId);
 }

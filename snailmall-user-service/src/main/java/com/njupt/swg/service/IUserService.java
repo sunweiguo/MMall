@@ -34,4 +34,6 @@ public interface IUserService {
 
     /** 登陆状态下更新个人信息（更新策略为：如果用户某一项不填，表示保持原样不变） **/
     ServerResponse updateInfomation(String email, String phone, String question, String answer, Integer userId);
+
+    UserResVO getUserInfoFromDB(Integer userId);
 }

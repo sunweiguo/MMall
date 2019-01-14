@@ -191,4 +191,12 @@
     and question = #{question}
     and answer = #{answer}
   </select>
+
+  <select id="checkEmailValid" resultType="int">
+    select
+    count(1)
+    from mmall_user
+    where email = #{email}
+    and id != #{userId}
+  </select>
 </mapper>

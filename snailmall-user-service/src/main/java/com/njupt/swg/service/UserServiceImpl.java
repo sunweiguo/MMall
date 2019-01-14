@@ -254,32 +254,51 @@ public class UserServiceImpl implements IUserService{
         if (user == null){
             return ServerResponse.createByErrorMessage("获取当前登陆用户失败，请重新登陆");
         }
+
+        //2.校验参数
+        if(StringUtils.isBlank(email) || StringUtils.isBlank(phone) || StringUtils.isBlank(question) || StringUtils.isBlank(answer)){
+            return ServerResponse.createByErrorMessage("更新的数据不能存在空值!");
+        }
+
         //2.修改用户信息应该并发不大，所以不用加锁了，这里校验邮箱是否重复
-        if(email != null && StringUtils.isNotBlank(email)){
-            ServerResponse response = this.checkValid(email,Constants.EMAIL);
-            if(!response.isSuccess()){
-                //说明用户名已经重复了
-                return response;
-            }
+        Integer queryCount = userMapper.checkEmailValid(email,userId);
+        if(queryCount > 0){
+            //说明这个邮箱已经被其他用户占用了，所以不能使用
+            return ServerResponse.createByErrorMessage("此邮箱已经被占用，换个试试~");
         }
-        //3.没有问题就可以更新了
-        if(StringUtils.isNotBlank(email)){
-            user.setEmail(email);
-        }
-        if(StringUtils.isNotBlank(phone)){
-            user.setPhone(phone);
-        }
-        if(StringUtils.isNotBlank(question)){
-            user.setQuestion(question);
-        }
-        if(StringUtils.isNotBlank(answer)){
-            user.setAnswer(answer);
-        }
-        int updateCount = userMapper.updateByPrimaryKeySelective(user);
+
+        User updateUser = new User();
+        updateUser.setId(userId);
+        updateUser.setEmail(email);
+        updateUser.setPhone(phone);
+        updateUser.setQuestion(question);
+        updateUser.setAnswer(answer);
+
+        int updateCount = userMapper.updateByPrimaryKeySelective(updateUser);
+
         if(updateCount > 0){
             return ServerResponse.createBySuccessMessage("更新信息成功");
         }
+
         return ServerResponse.createByErrorMessage("更新用户信息失败");
+    }
+
+    @Override
+    public UserResVO getUserInfoFromDB(Integer userId) {
+        UserResVO userResVO = new UserResVO();
+        User userDB = userMapper.selectByPrimaryKey(userId);
+        if(userDB != null){
+            userResVO.setId(userId);
+            userResVO.setUsername(userDB.getUsername());
+            userResVO.setEmail(userDB.getEmail());
+            userResVO.setRole(userDB.getRole());
+            userResVO.setPhone(userDB.getPhone());
+            userResVO.setQuestion(userDB.getQuestion());
+            userResVO.setAnswer(userDB.getAnswer());
+            userResVO.setCreateTime(userDB.getCreateTime());
+            userResVO.setUpdateTime(userDB.getUpdateTime());
+        }
+        return userResVO;
     }
 
 

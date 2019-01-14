@@ -117,19 +117,9 @@ public class UserController {
             return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
         }
         User currentUser = JsonUtil.Str2Obj(userStr,User.class);
-        UserResVO userResVO = new UserResVO();
-        userResVO.setId(currentUser.getId());
-        userResVO.setUsername(currentUser.getUsername());
-        userResVO.setEmail(currentUser.getEmail());
-        userResVO.setPhone(currentUser.getPhone());
-        userResVO.setRole(currentUser.getRole());
-        userResVO.setQuestion(currentUser.getQuestion());
-        userResVO.setAnswer(currentUser.getAnswer());
-        userResVO.setCreateTime(currentUser.getCreateTime());
-        userResVO.setUpdateTime(currentUser.getUpdateTime());
+        UserResVO userResVO = userService.getUserInfoFromDB(currentUser.getId());
         return ServerResponse.createBySuccess("登陆用户获取自身信息成功",userResVO);
     }
-
 
     /**
      * 根据用户名去拿到对应的问题
