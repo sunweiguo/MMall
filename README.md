@@ -32,6 +32,21 @@
 
 ![image](./jdfw-small.gif)
 
+部分页面截图：
+
+![image](http://bloghello.oursnail.cn/mall-index.png)
+
+![image](http://bloghello.oursnail.cn/mall-list.png)
+
+![image](http://bloghello.oursnail.cn/mall-detail.png)
+
+
+![image](http://bloghello.oursnail.cn/mall-cart.png)
+
+![image](http://bloghello.oursnail.cn/mall-comfirm.png)
+
+![image](http://bloghello.oursnail.cn/mall-pay.png)
+
 
 > 经过一遍遍测试，商城还是存在一些无伤大雅的bug，但是主要还是锻炼自己的能力嘛！
 >
