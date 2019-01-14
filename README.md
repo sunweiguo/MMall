@@ -34,18 +34,17 @@
 
 部分页面截图：
 
-![image](http://bloghello.oursnail.cn/mall-index.png)
+![image](./pic/mall-index.png)
 
-![image](http://bloghello.oursnail.cn/mall-list.png)
+![image](./pic/mall-list.png)
 
-![image](http://bloghello.oursnail.cn/mall-detail.png)
+![image](./pic/mall-detail.png)
 
+![image](./pic/mall-cart.png)
 
-![image](http://bloghello.oursnail.cn/mall-cart.png)
+![image](./pic/mall-comfirm.png)
 
-![image](http://bloghello.oursnail.cn/mall-comfirm.png)
-
-![image](http://bloghello.oursnail.cn/mall-pay.png)
+![image](./pic/mall-pay.png)
 
 
 > 经过一遍遍测试，商城还是存在一些无伤大雅的bug，但是主要还是锻炼自己的能力嘛！
