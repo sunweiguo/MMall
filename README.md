@@ -48,6 +48,22 @@
 
 ![image](./pic/mall-pay.png)
 
+后台管理系统为：http://admin.oursnail.cn 用户名为 admin 密码为 1234567 请不要乱改数据哦！
+
+![image](http://bloghello.oursnail.cn/snailmall20-2.png)
+
+![image](http://bloghello.oursnail.cn/snailmall20-3.png)
+
+![image](http://bloghello.oursnail.cn/snailmall20-4.png)
+
+![image](http://bloghello.oursnail.cn/snailmall20-5.png)
+
+
+正常情况下访问 http://111.231.119.253:8761/ 一般是如下图：
+
+![image](http://bloghello.oursnail.cn/snailmall20-1.png)
+
+少了，说明挂了。。。
 
 > 经过一遍遍测试，商城还是存在一些无伤大雅的bug，但是主要还是锻炼自己的能力嘛！
 >
